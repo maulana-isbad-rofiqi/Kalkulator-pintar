@@ -321,7 +321,7 @@
                <input type="date" id="date1" class="input-cyber w-full p-3 rounded-lg">
                <input type="date" id="date2" class="input-cyber w-full p-3 rounded-lg">
                <button onclick="hitungSelisihLengkap()" class="w-full btn-cyber py-3 rounded-lg font-bold">HITUNG DETAIL</button>
-               <p id="hasilSelisih" class="text-center text-lg font-bold mt-4 text-white leading-relaxed">-</p>
+               <div id="hasilSelisih" class="text-center mt-4 text-white leading-relaxed">-</div>
              </div>
           </div>
           <div class="glass-panel p-6 rounded-2xl">
@@ -355,7 +355,7 @@
 
   <script>
     // =======================================================
-    // 1. TEMPEL URL SCRIPT BARU ANDA DI SINI:
+    // 1. URL SCRIPT ANDA
     const API_URL = "https://script.google.com/macros/s/AKfycbwf4gXgoFjMX0VbPEeFL_uwEK9l_JKUAUODsmfrI4CWZeKBWk6j9ZKyD6oKn2uagEuS/exec";
     // =======================================================
     
@@ -418,7 +418,7 @@
       return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(num);
     }
 
-    // --- DOMPET LOGIC ---
+    // --- DOMPET LOGIC (CLOUD + ANTI CACHE) ---
     async function fetchDataCloud() {
       const statusEl = document.getElementById('statusSync');
       const loader = document.getElementById('loadingList');
@@ -530,7 +530,7 @@
           const dateStr = d.toLocaleDateString('id-ID', { 
               day: 'numeric', month: 'short', year: 'numeric',
               hour: '2-digit', minute: '2-digit'
-          }).replace('.', ':');
+          }).replace('.', ':'); // Fix separator jam
           
           html += `<div class="flex justify-between items-center p-3 glass-panel rounded-xl fade-in hover:bg-white/5 transition group">
               <div><div class="font-bold text-sm text-white">${t.desc}</div><div class="text-xs text-gray-500">${dateStr}</div></div>
@@ -599,7 +599,7 @@
       document.getElementById('hasilTanggal').textContent = base.toLocaleDateString('id-ID');
     }
 
-    // --- NEW: DATE CALC LOGIC (OUTPUT LENGKAP) ---
+    // --- NEW: DATE CALC LOGIC (Output Lengkap) ---
     function hitungSelisihLengkap() {
       const d1Str = document.getElementById('date1').value;
       const d2Str = document.getElementById('date2').value;
@@ -610,6 +610,7 @@
       
       if (d1 > d2) { const temp = d1; d1 = d2; d2 = temp; }
       
+      // 1. Hitung YMD Biasa
       let years = d2.getFullYear() - d1.getFullYear();
       let months = d2.getMonth() - d1.getMonth();
       let days = d2.getDate() - d1.getDate();
@@ -621,13 +622,22 @@
       }
       if (months < 0) { years--; months += 12; }
       
+      // 2. Hitung Total Conversions
+      let totalDays = Math.floor((d2 - d1) / (1000 * 60 * 60 * 24));
+      let totalMonths = (years * 12) + months;
+      
       document.getElementById('hasilSelisih').innerHTML = `
-        <span class="text-cyan-400">${years}</span> Tahun, 
-        <span class="text-purple-400">${months}</span> Bulan, 
-        <span class="text-green-400">${days}</span> Hari, <br>
-        <span class="text-yellow-400">0</span> Jam, 
-        <span class="text-pink-400">0</span> Menit, 
-        <span class="text-blue-400">0</span> Detik
+        <div class="mb-3">
+            <span class="text-cyan-400 text-xl font-bold">${years}</span> Tahun, 
+            <span class="text-purple-400 text-xl font-bold">${months}</span> Bulan, 
+            <span class="text-green-400 text-xl font-bold">${days}</span> Hari
+        </div>
+        <div class="grid grid-cols-2 gap-2 text-xs text-left bg-white/5 p-3 rounded-lg border border-white/10">
+            <div class="text-gray-400">Total Bulan:</div>
+            <div class="text-right text-yellow-400 font-mono font-bold">≈ ${totalMonths.toLocaleString()} Bulan</div>
+            <div class="text-gray-400">Total Hari:</div>
+            <div class="text-right text-pink-400 font-mono font-bold">${totalDays.toLocaleString()} Hari</div>
+        </div>
       `;
     }
   </script>
