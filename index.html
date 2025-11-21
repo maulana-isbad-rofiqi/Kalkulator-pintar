@@ -1,189 +1,108 @@
 <!DOCTYPE html>
-<html lang="id" class="scroll-smooth">
+<html lang="id">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Kaltain • Kalkulator Target Pintar</title>
-  <meta name="description" content="Aplikasi target penjualan, dompet, kalkulator standar & tanggal — paling keren 2025"/>
+  <title>Kaltain — Kalkulator Target Pintar</title>
+  <meta name="description" content="Target penjualan, dompet, kalkulator & tanggal — simpel, cepat, keren"/>
 
-  <!-- Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Space+Grotesk:wght@700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" rel="stylesheet"/>
-
-  <!-- Tailwind + Confetti + Particles -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/tsparticles-confetti@2.12.0/tsparticles.confetti.min.js"></script>
+  <!-- Font & Icon -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"/>
 
   <style>
-    body { margin: 0; overflow: hidden; background: #000; height: 100vh; font-family: 'Inter', sans-serif; }
-    #particles { position: fixed; inset: 0; z-index: 1; }
-    .splash { 
-      position: fixed; inset: 0; background: radial-gradient(circle at center, #0f051d 0%, #000 70%); 
-      z-index: 9999; display: flex; align-items: center; justify-content: center; flex-direction: column; 
-      transition: opacity 2s ease-out; color: white;
-    }
-    .title-main { 
-      font-family: 'Orbitron', sans-serif; font-size: 100px; font-weight: 900; 
-      background: linear-gradient(90deg, #a855f7, #ec4899, #22d3ee, #f59e0b);
-      -webkit-background-clip: text; background-clip: text; color: transparent;
-      text-shadow: 0 0 60px rgba(168,85,247,0.8); letter-spacing: 8px;
-      animation: glow 3s infinite alternate;
-    }
-    .subtitle { 
-      font-family: 'Space Grotesk', sans-serif; font-size: 36px; margin-top: 20px; 
-      background: linear-gradient(to right, #c084fc, #e879f9); -webkit-background-clip: text; color: transparent;
-    }
-    .credit { 
-      font-family: 'Orbitron', sans-serif; font-size: 32px; margin-top: 40px; 
-      background: linear-gradient(45deg, #fbbf24, #f97316); -webkit-background-clip: text; color: transparent;
-      animation: pulse 2s infinite;
-    }
-    .loading-bar {
-      width: 600px; height: 8px; background: rgba(255,255,255,0.1); border-radius: 50px; margin-top: 60px;
-      overflow: hidden; border: 2px solid rgba(168,85,247,0.5);
-    }
-    .progress { height: 100%; width: 0%; background: linear-gradient(90deg, #a855f7, #ec4899); border-radius: 50px; 
-      animation: loading 4s ease-in-out forwards; box-shadow: 0 0 30px #a855f7; }
-    @keyframes glow { from { text-shadow: 0 0 40px rgba(168,85,247,0.6); } to { text-shadow: 0 0 80px rgba(236,72,153,0.9); } }
-    @keyframes pulse { 0%,100% { opacity: 0.8; } 50% { opacity: 1; } }
-    @keyframes loading { 0% { width: 0%; } 100% { width: 100%; } }
-    .glass { background: rgba(255,255,255,0.08); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); }
-    .btn-float:hover { transform: translateY(-12px) scale(1.08); box-shadow: 0 30px 60px rgba(0,0,0,0.6); }
+    :root { --purple: #a855f7; --pink: #ec48993; --cyan: #22d3ee; --yellow: #fbbf24; }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family: 'Inter', sans-serif; background: #0f0f1e; color: #fff; min-height: 100vh; overflow-x: hidden; }
+    
+    /* SPLASH EPIC TAPI RINGAN */
+    #splash { position:fixed; inset:0; background:#0a0a15; z-index:9999; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:20px; transition:opacity 1.2s ease-out; }
+    #splash h1 { font-size: clamp(4rem, 12vw, 7rem); font-weight:900; background: linear-gradient(90deg, #a855f7, #ec4899, #22d3ee); -webkit-background-clip:text; color:transparent; }
+    #splash p { font-size: clamp(1.2rem, 4vw, 1.8rem); opacity:0.9; }
+    #splash .credit { font-size:1.2rem; background: linear-gradient(45deg, #fbbf24, #f97316); -webkit-background-clip:text; color:transparent; font-weight:700; }
+    .bar { width:280px; height:4px; background:#333; border-radius:2px; overflow:hidden; }
+    .fill { height:100%; width:0; background:linear-gradient(90deg,#a855f7,#ec4899); border-radius:2px; animation:load 3.5s ease-in-out forwards; }
+
+    /* LAYOUT UTAMA */
+    main { padding:20px; max-width:480px; margin:0 auto; min-height:100vh; display:flex; flex-direction:column; }
+    header { text-align:center; margin-bottom:40px; }
+    header h1 { font-size:2.8rem; font-weight:900; background:linear-gradient(90deg,var(--purple),var(--pink)); -webkit-background-clip:text; color:transparent; }
+    header p { opacity:0.8; font-size:1.1rem; }
+
+    .grid { display:grid; grid-template-columns: repeat(2,1fr); gap:16px; flex:1; }
+    .card { background:rgba(255,255,255,0.06); backdrop-filter:blur(12px); border:1px solid rgba(255,255,255,0.1); border-radius:20px; padding:24px; text-align:center; transition:0.3s; }
+    .card:hover { transform:translateY(-8px); background:rgba(255,255,255,0.12); }
+    .card i { font-size:3rem; margin-bottom:12px; display:block; }
+    .card span { font-weight:700; font-size:1.1rem; }
+
+    .sultan { grid-column:1/-1; background:linear-gradient(135deg, #f59e0b44, #ef444444); padding:32px; }
+    .sultan i { font-size:5rem; }
+
+    .hidden { display:none !important; }
+    @keyframes load { to { width:100%; } }
   </style>
 </head>
-<body class="text-white">
+<body>
 
-  <!-- PARTICLE BACKGROUND -->
-  <div id="particles"></div>
-
-  <!-- SPLASH SCREEN EPIC -->
-  <div id="splash" class="splash">
-    <h1 class="title-main">KALTAIN</h1>
-    <p class="subtitle">Kalkulator Target Pintar</p>
-    <div class="loading-bar"><div class="progress"></div></div>
-    <p class="credit mt-12">By Itsbad Development</p>
-  </div>
-
-  <!-- AUTH -->
-  <div id="auth" class="fixed inset-0 z-50 flex items-center justify-center hidden">
-    <div class="glass p-16 rounded-3xl shadow-2xl max-w-lg w-full mx-6 border border-purple-500/40">
-      <h2 class="text-6xl font-black text-center mb-12 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">Welcome</h2>
-      <input type="text" id="username" placeholder="Username" class="w-full p-6 rounded-2xl glass text-2xl mb-6 focus:ring-4 focus:ring-purple-500 focus:outline-none"/>
-      <input type="password" id="password" placeholder="Password" class="w-full p-6 rounded-2xl glass text-2xl mb-10 focus:ring-4 focus:ring-purple-500 focus:outline-none"/>
-      <button onclick="login()" class="w-full bg-gradient-to-r from-purple-600 to-pink-600 py-8 rounded-2xl font-black text-3xl transition btn-float">
-        MASUK SEKARANG
-      </button>
-      <p class="text-center mt-6 text-lg">Belum punya akun? <span onclick="registerMode()" class="text-cyan-400 font-bold cursor-pointer">Daftar Gratis</span></p>
-    </div>
+  <!-- SPLASH SCREEN -->
+  <div id="splash">
+    <h1>KALTAIN</h1>
+    <p>Kalkulator Target Pintar</p>
+    <div class="bar"><div class="fill"></div></div>
+    <p class="credit">By Itsbad Development</p>
   </div>
 
   <!-- MAIN APP -->
-  <div id="app" class="relative z-10 hidden min-h-screen p-8">
-    <div class="max-w-7xl mx-auto">
+  <main id="app" class="hidden">
+    <header>
+      <h1>Kaltain</h1>
+      <p>Selamat datang kembali, <span id="user">User</span>!</p>
+    </header>
 
-      <div class="flex justify-between items-center mb-16">
-        <div>
-          <h1 class="text-8xl font-black bg-gradient-to-r from-purple-400 via-pink-500 to-cyan-400 bg-clip-text text-transparent">Kaltain</h1>
-          <p class="text-3xl mt-4 opacity-90">Halo, <span id="userDisplay" class="text-yellow-400 font-bold"></span>!</p>
-        </div>
-        <button onclick="logout()" class="glass px-10 py-5 rounded-full text-xl font-bold btn-float transition">Logout</button>
+    <div class="grid">
+      <div class="card" onclick="alert('Target Pintar coming soon!')">
+        <i class="fas fa-bullseye" style="color:#a855f7"></i>
+        <span>Target Pintar</span>
       </div>
 
-      <!-- MENU GRID -->
-      <div id="menu" class="grid grid-cols-2 md:grid-cols-4 gap-10">
-        <button onclick="show('target')" class="glass p-12 rounded-3xl text-center btn-float transition hover:bg-purple-600/30">
-          <div class="text-8xl mb-6">Target</div>
-          <div class="text-3xl font-black">Target Pintar</div>
-        </button>
-        <button onclick="show('dompet')" class="glass p-12 rounded-3xl text-center btn-float transition hover:bg-green-600/30">
-          <div class="text-8xl mb-6">Wallet</div>
-          <div class="text-3xl font-black">Dompet</div>
-        </button>
-        <button onclick="show('calc')" class="glass p-12 rounded-3xl text-center btn-float transition hover:bg-blue-600/30">
-          <div class="text-8xl mb-6">Calculator</div>
-          <div class="text-3xl font-black">Kalkulator</div>
-        </button>
-        <button onclick="show('datecalc')" class="glass p-12 rounded-3xl text-center btn-float transition hover:bg-orange-600/30">
-          <div class="text-8xl mb-6">Calendar</div>
-          <div class="text-3xl font-black">Tanggal</div>
-        </button>
-        <button onclick="show('sultan')" class="col-span-2 md:col-span-4 glass p-20 rounded-3xl text-center bg-gradient-to-r from-yellow-600/40 to-orange-600/40 btn-float transition">
-          <div class="text-10xl mb-6">Crown</div>
-          <div class="text-5xl font-black">SULTAN AREA</div>
-        </button>
+      <div class="card" onclick="alert('Dompet coming soon!')">
+        <i class="fas fa-wallet" style="color:#10b981"></i>
+        <span>Dompet</span>
       </div>
 
-      <!-- Semua section (target, dompet, calc, datecalc, sultan) sama seperti versi sebelumnya -->
-      <!-- Karena terlalu panjang, kamu tinggal copy dari versi sebelumnya -->
+      <div class="card" onclick="alert('Kalkulator standar coming soon!')">
+        <i class="fas fa-calculator" style="color:#3b82f6"></i>
+        <span>Kalkulator</span>
+      </div>
 
-      <div class="text-center mt-20">
-        <button onclick="show('menu')" class="text-yellow-400 text-3xl underline hover:text-yellow-300 transition">Kembali ke Menu</button>
+      <div class="card" onclick="alert('Kalkulator tanggal coming soon!')">
+        <i class="fas fa-calendar-alt" style="color:#f59e0b"></i>
+        <span>Tanggal</span>
+      </div>
+
+      <div class="card sultan" onclick="location.href='#sultan'">
+        <i class="fas fa-crown" style="color:#fbbf24"></i>
+        <span>SULTAN AREA</span>
       </div>
     </div>
-  </div>
+
+    <div style="text-align:center; margin-top:30px; font-size:0.9rem; opacity:0.6;">
+      © 2025 Itsbad Development
+    </div>
+  </main>
 
 <script>
-// Splash Screen Epic
+// Splash selesai → masuk app (hanya 3.5 detik)
 setTimeout(() => {
-  document.querySelector('.progress').style.animation = 'loading 4s ease-in-out forwards';
+  document.getElementById('splash').style.opacity = '0';
   setTimeout(() => {
-    document.getElementById('splash').style.opacity = '0';
-    setTimeout(() => {
-      document.getElementById('splash').classList.add('hidden');
-      document.getElementById('auth').classList.remove('hidden');
-      // Confetti saat loading selesai
-      confetti({ particleCount: 300, spread: 120, origin: { y: 0.6 } });
-    }, 2000);
-  }, 4000);
-}, 1000);
+    document.getElementById('splash').classList.add('hidden');
+    document.getElementById('app').classList.remove('hidden');
+  }, 1200);
+}, 3500);
 
-// Particles Background
-tsParticles.load("particles", {
-  preset: "fireworks",
-  particles: { color: { value: ["#a855f7", "#ec4899", "#22d3ee", "#f59e0b"] }, opacity: { value: 0.8 } }
-});
-
-// Auth System (sama seperti sebelumnya)
-let currentUser = localStorage.getItem('kaltain_user');
-if (currentUser) {
-  document.getElementById('userDisplay').textContent = currentUser;
-  document.getElementById('auth').classList.add('hidden');
-  document.getElementById('app').classList.remove('hidden');
-  document.getElementById('splash').classList.add('hidden');
-}
-
-function login() {
-  const user = document.getElementById('username').value.trim();
-  const pass = document.getElementById('password').value;
-  if (!user || !pass) return alert("Isi username & password bro!");
-  const saved = localStorage.getItem(`user_${user}`);
-  if (!saved) return alert("Username tidak terdaftar!");
-  if (saved !== pass) return alert("Password salah!");
-  
-  currentUser = user;
-  localStorage.setItem('kaltain_user', user);
-  document.getElementById('userDisplay').textContent = user;
-  document.getElementById('auth').classList.add('hidden');
-  document.getElementById('app').classList.remove('hidden');
-  confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 } });
-}
-
-function logout() {
-  if (confirm("Yakin keluar?")) {
-    localStorage.removeItem('kaltain_user');
-    location.reload();
-  }
-}
-
-function show(id) {
-  ['menu','target','dompet','calc','datecalc','sultan'].forEach(x => {
-    const el = document.getElementById(x);
-    if (el) el.classList.add('hidden');
-  });
-  document.getElementById(id).classList.remove('hidden');
-}
-
-show('menu');
-</script>
+// Simulasi user (nanti ganti dengan login beneran)
+document.getElementById('user').textContent = localStorage.getItem('kaltain_user') || 'Sultan';
+  </script>
 </body>
 </html>
