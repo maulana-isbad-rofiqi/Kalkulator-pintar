@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KALTAIN • Cloud System</title>
+  <title>KALTAIN • Kalkulator Target Pintar</title>
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -21,6 +21,7 @@
             cyber: ['Orbitron', 'sans-serif'],
           },
           colors: {
+            glass: "rgba(255, 255, 255, 0.05)",
             primary: "#a855f7", 
           }
         }
@@ -29,7 +30,7 @@
   </script>
 
   <style>
-    /* --- DESAIN AURORA GLASS (ORIGINAL) --- */
+    /* --- STYLE UTAMA (Tampilan Awal) --- */
     body { background-color: #050505; color: #ffffff; overflow-x: hidden; }
     
     .bg-aurora {
@@ -44,11 +45,13 @@
       background: rgba(20, 20, 25, 0.6); backdrop-filter: blur(16px);
       border: 1px solid rgba(255, 255, 255, 0.08); box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
     }
+
     .input-cyber {
       background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 255, 255, 0.1); color: white; transition: all 0.3s ease;
     }
     .input-cyber:focus { border-color: #a855f7; box-shadow: 0 0 15px rgba(168, 85, 247, 0.3); outline: none; }
     
+    /* Tombol Keren */
     .btn-cyber {
       background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02));
       border: 1px solid rgba(255,255,255,0.1); transition: all 0.3s; position: relative; overflow: hidden;
@@ -56,12 +59,13 @@
     .btn-cyber:hover { transform: translateY(-2px); border-color: #a855f7; box-shadow: 0 0 20px rgba(168, 85, 247, 0.4); }
     .btn-cyber:active { transform: scale(0.98); }
 
-    .btn-primary {
-      background: linear-gradient(90deg, #7c3aed, #db2777); border: none;
-    }
+    .btn-primary { background: linear-gradient(90deg, #7c3aed, #db2777); border: none; }
     .btn-primary:hover { box-shadow: 0 0 30px rgba(219, 39, 119, 0.5); }
 
-    /* LOADER */
+    /* Animations & Loader */
+    .fade-in { animation: fadeIn 0.5s ease-out forwards; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    
     .loader {
       width: 60px; height: 60px; border: 5px solid rgba(255, 255, 255, 0.1);
       border-top-color: #a855f7; border-radius: 50%; animation: spin 1s linear infinite; margin: 20px auto;
@@ -72,11 +76,9 @@
     }
     @keyframes spin { to { transform: rotate(360deg); } }
     
-    .fade-in { animation: fadeIn 0.5s ease-out forwards; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     .hidden { display: none !important; }
     
-    /* Custom Date Input Icon Color */
+    /* Date Input Icon fix for dark mode */
     input[type="date"]::-webkit-calendar-picker-indicator,
     input[type="datetime-local"]::-webkit-calendar-picker-indicator {
         filter: invert(1); cursor: pointer;
@@ -94,7 +96,7 @@
         </h1>
         <div class="loader"></div>
         <p class="text-white font-cyber text-lg md:text-xl tracking-widest uppercase">Kalkulator Target Pintar</p>
-        <p class="text-xs font-mono text-green-400 animate-pulse"><i class="fas fa-wifi mr-1"></i> Connecting to Cloud Server...</p>
+        <p class="text-xs font-mono text-green-400 animate-pulse"><i class="fas fa-wifi mr-1"></i> Connecting to Cloud...</p>
         <p class="text-gray-500 font-mono text-sm mt-6">By 【﻿ 𝕀𝕥𝕤𝕓𝕒𝕕 】 Developer</p>
     </div>
   </div>
@@ -108,9 +110,9 @@
       <div class="space-y-5">
         <div>
           <label class="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-wider">Email Google</label>
-          <input type="email" id="loginEmail" class="input-cyber w-full p-4 rounded-xl text-center font-mono" placeholder="email@gmail.com">
+          <input type="email" id="loginEmail" class="input-cyber w-full p-4 rounded-xl text-center font-mono" placeholder="contoh@gmail.com">
         </div>
-        <button onclick="login()" class="w-full py-4 rounded-xl font-bold text-lg btn-primary text-white mt-4 shadow-lg">MASUK & SINKRON</button>
+        <button onclick="login()" class="w-full py-4 rounded-xl font-bold text-lg btn-primary text-white mt-4 shadow-lg">MASUK SYSTEM</button>
       </div>
     </div>
   </div>
@@ -129,8 +131,8 @@
           </div>
           <div class="flex items-center gap-4">
             <div class="text-right hidden md:block">
-              <div class="text-xs text-gray-400 uppercase">Logged in as</div>
-              <div id="userDisplay" class="font-bold text-cyan-400 font-mono text-xs">User</div>
+              <div class="text-xs text-gray-400 uppercase">User</div>
+              <div id="userDisplay" class="font-bold text-cyan-400 font-mono text-xs">...</div>
             </div>
             <button onclick="logout()" class="w-10 h-10 rounded-full bg-red-500/20 text-red-400 hover:bg-red-500 hover:text-white transition flex items-center justify-center">
               <i class="fas fa-power-off"></i>
@@ -149,28 +151,24 @@
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <button onclick="show('target')" class="group glass-panel p-8 rounded-3xl text-center hover:bg-purple-900/20 transition duration-300 relative overflow-hidden">
-            <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition"><i class="fas fa-bullseye text-9xl"></i></div>
-            <div class="w-16 h-16 mx-auto bg-purple-500/20 rounded-2xl flex items-center justify-center text-purple-400 text-3xl mb-4 group-hover:scale-110 transition"><i class="fas fa-bullseye"></i></div>
+            <i class="fas fa-bullseye text-5xl text-purple-400 mb-4 group-hover:scale-110 transition"></i>
             <h3 class="text-xl font-bold mb-1">Target Pintar</h3>
             <p class="text-xs text-gray-400">Hitung BEP & Laba</p>
           </button>
           <button onclick="show('dompet')" class="group glass-panel p-8 rounded-3xl text-center hover:bg-green-900/20 transition duration-300 relative overflow-hidden">
-            <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition"><i class="fas fa-wallet text-9xl"></i></div>
-            <div class="w-16 h-16 mx-auto bg-green-500/20 rounded-2xl flex items-center justify-center text-green-400 text-3xl mb-4 group-hover:scale-110 transition"><i class="fas fa-wallet"></i></div>
+            <i class="fas fa-wallet text-5xl text-green-400 mb-4 group-hover:scale-110 transition"></i>
             <h3 class="text-xl font-bold mb-1">Dompet Cloud</h3>
             <p class="text-xs text-gray-400">Catat Keuangan</p>
           </button>
           <button onclick="show('calc')" class="group glass-panel p-8 rounded-3xl text-center hover:bg-blue-900/20 transition duration-300 relative overflow-hidden">
-            <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition"><i class="fas fa-calculator text-9xl"></i></div>
-            <div class="w-16 h-16 mx-auto bg-blue-500/20 rounded-2xl flex items-center justify-center text-blue-400 text-3xl mb-4 group-hover:scale-110 transition"><i class="fas fa-calculator"></i></div>
+            <i class="fas fa-calculator text-5xl text-blue-400 mb-4 group-hover:scale-110 transition"></i>
             <h3 class="text-xl font-bold mb-1">Kalkulator</h3>
             <p class="text-xs text-gray-400">Alat Hitung Cepat</p>
           </button>
           <button onclick="show('datecalc')" class="group glass-panel p-8 rounded-3xl text-center hover:bg-orange-900/20 transition duration-300 relative overflow-hidden">
-            <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition"><i class="fas fa-calendar-alt text-9xl"></i></div>
-            <div class="w-16 h-16 mx-auto bg-orange-500/20 rounded-2xl flex items-center justify-center text-orange-400 text-3xl mb-4 group-hover:scale-110 transition"><i class="fas fa-calendar-alt"></i></div>
-            <h3 class="text-xl font-bold mb-1">Waktu Detail</h3>
-            <p class="text-xs text-gray-400">Hitung Durasi Lengkap</p>
+            <i class="fas fa-calendar-alt text-5xl text-orange-400 mb-4 group-hover:scale-110 transition"></i>
+            <h3 class="text-xl font-bold mb-1">Kalkulator Waktu</h3>
+            <p class="text-xs text-gray-400">Selisih & Prediksi</p>
           </button>
           <button onclick="show('sultan')" class="col-span-1 md:col-span-2 lg:col-span-4 glass-panel p-10 rounded-3xl flex flex-col md:flex-row items-center justify-between bg-gradient-to-r from-yellow-900/20 to-orange-900/20 border-yellow-500/30 hover:border-yellow-500/60 transition group">
             <div class="flex items-center gap-6 mb-6 md:mb-0">
@@ -225,7 +223,7 @@
           <button onclick="show('menu')" class="w-12 h-12 rounded-xl glass-panel flex items-center justify-center hover:bg-white/10"><i class="fas fa-arrow-left"></i></button>
           <div>
               <h2 class="text-2xl font-bold font-cyber">Dompet Cloud</h2>
-              <p class="text-xs text-gray-400 ml-4 pt-2" id="statusSync">Ready</p>
+              <p class="text-[10px] text-gray-400 ml-1 pt-1" id="statusSync">Status: Siap</p>
           </div>
         </div>
 
@@ -238,10 +236,12 @@
                <button onclick="setTipe('pemasukan')" id="btnMasuk" class="flex-1 py-3 rounded-xl border border-green-500/30 text-green-400 hover:bg-green-500/20 transition">Pemasukan</button>
                <button onclick="setTipe('pengeluaran')" id="btnKeluar" class="flex-1 py-3 rounded-xl border border-red-500/30 text-red-400 hover:bg-red-500/20 transition">Pengeluaran</button>
              </div>
-             <div class="space-y-4">
+             <div id="formTransaksi" class="space-y-4">
                 <input type="number" id="jumlahTransaksi" placeholder="Nominal (Rp)" class="input-cyber w-full p-4 rounded-xl text-xl">
                 <input type="text" id="ketTransaksi" placeholder="Keterangan (Contoh: Makan Siang)" class="input-cyber w-full p-4 rounded-xl">
-                <button onclick="simpanTransaksi()" id="btnSimpan" class="w-full btn-cyber bg-white/10 py-4 rounded-xl font-bold">KIRIM KE CLOUD</button>
+                <button onclick="simpanTransaksi()" id="btnSimpan" class="w-full btn-cyber bg-white/10 py-4 rounded-xl font-bold flex justify-center items-center">
+                    <span>KIRIM KE CLOUD</span>
+                </button>
              </div>
           </div>
           
@@ -250,8 +250,12 @@
                <div class="flex justify-between items-center">
                    <h3 class="font-bold">Riwayat</h3>
                    <div class="flex gap-2">
-                       <button onclick="hapusDataCloud()" id="btnHapus" class="text-xs text-red-400 hover:text-red-300 border border-red-500/30 px-3 py-1 rounded-lg hover:bg-red-500/20 transition flex items-center gap-1"><i class="fas fa-bomb"></i> Reset</button>
-                       <button onclick="fetchDataCloud()" class="text-xs bg-purple-500/20 text-purple-400 px-3 py-1 rounded-lg hover:bg-purple-500/40"><i class="fas fa-sync"></i></button>
+                       <button onclick="hapusDataCloud()" id="btnHapus" class="text-xs text-red-400 hover:text-red-300 border border-red-500/30 px-3 py-1 rounded-lg hover:bg-red-500/20 transition flex items-center gap-1">
+                         <i class="fas fa-bomb"></i> Reset
+                       </button>
+                       <button onclick="fetchDataCloud()" class="text-xs bg-purple-500/20 text-purple-400 px-3 py-1 rounded-lg hover:bg-purple-500/40">
+                         <i class="fas fa-sync-alt"></i>
+                       </button>
                    </div>
                </div>
                <div class="flex gap-2 mt-2">
@@ -286,30 +290,29 @@
       </div>
       
       <div id="datecalc" class="hidden fade-in">
-        <div class="flex items-center mb-8 gap-4"><button onclick="show('menu')" class="w-12 h-12 rounded-xl glass-panel flex items-center justify-center hover:bg-white/10"><i class="fas fa-arrow-left"></i></button><h2 class="text-2xl font-bold font-cyber">Kalkulator Waktu</h2></div>
-        
-        <div class="max-w-lg mx-auto glass-panel p-8 rounded-2xl border border-cyan-500/30">
-             <h3 class="text-lg font-bold mb-6 text-cyan-400 text-center uppercase tracking-widest"><i class="fas fa-clock mr-2"></i>Hitung Durasi Lengkap</h3>
+        <div class="flex items-center mb-8 gap-4">
+          <button onclick="show('menu')" class="w-12 h-12 rounded-xl glass-panel flex items-center justify-center hover:bg-white/10"><i class="fas fa-arrow-left"></i></button>
+          <h2 class="text-2xl font-bold font-cyber">Kalkulator Waktu</h2>
+        </div>
+        <div class="glass-panel p-6 rounded-2xl max-w-2xl mx-auto">
+             <h3 class="text-lg font-bold mb-4 text-blue-400 text-center"><i class="fas fa-stopwatch mr-2"></i>Hitung Selisih Waktu Detail</h3>
              
-             <div class="space-y-6">
-               <div>
-                   <label class="block text-xs text-gray-400 mb-2 uppercase font-bold">Mulai (Tanggal & Jam)</label>
-                   <input type="datetime-local" id="date1" class="input-cyber w-full p-4 rounded-xl text-white text-lg">
-               </div>
-               
-               <div class="flex justify-center text-2xl text-gray-600"><i class="fas fa-arrow-down"></i></div>
-               
-               <div>
-                   <label class="block text-xs text-gray-400 mb-2 uppercase font-bold">Sampai (Tanggal & Jam)</label>
-                   <input type="datetime-local" id="date2" class="input-cyber w-full p-4 rounded-xl text-white text-lg">
-               </div>
-
-               <button onclick="hitungSelisih()" class="w-full btn-cyber py-4 rounded-xl font-bold text-lg bg-gradient-to-r from-cyan-600 to-blue-600 shadow-lg">HITUNG JARAK</button>
-               
-               <div class="mt-6 p-4 bg-black/40 rounded-xl text-center border border-white/10">
-                   <p class="text-xs text-gray-500 mb-2 uppercase">Hasil Perhitungan</p>
-                   <p id="hasilSelisih" class="text-sm md:text-lg font-mono font-bold text-white leading-relaxed">-</p>
-               </div>
+             <div class="grid md:grid-cols-2 gap-4">
+                 <div>
+                     <label class="text-xs text-gray-400 block mb-1">Mulai:</label>
+                     <input type="datetime-local" id="date1" class="input-cyber w-full p-3 rounded-lg text-sm">
+                 </div>
+                 <div>
+                     <label class="text-xs text-gray-400 block mb-1">Sampai:</label>
+                     <input type="datetime-local" id="date2" class="input-cyber w-full p-3 rounded-lg text-sm">
+                 </div>
+             </div>
+             
+             <button onclick="hitungSelisihLengkap()" class="w-full btn-cyber py-4 rounded-xl font-bold mt-6 text-cyan-300 border-cyan-500/50">HITUNG DURASI</button>
+             
+             <div id="hasilLengkap" class="hidden mt-6 p-4 bg-black/40 rounded-xl border border-white/10 text-center">
+                 <p class="text-xs text-gray-500 mb-2">Durasi Total:</p>
+                 <p id="txtHasil" class="text-lg md:text-xl font-mono font-bold text-white leading-relaxed">-</p>
              </div>
         </div>
       </div>
@@ -317,17 +320,25 @@
       <div id="sultan" class="hidden fade-in text-center py-10">
         <button onclick="show('menu')" class="mb-8 text-gray-400 hover:text-white flex items-center mx-auto gap-2"><i class="fas fa-arrow-left"></i> Kembali</button>
         <div class="inline-block p-1 rounded-3xl bg-gradient-to-br from-yellow-400 via-orange-500 to-red-500 shadow-xl">
-          <div class="glass-panel p-10 rounded-[20px] max-w-md"><h2 class="text-4xl font-black font-cyber text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-yellow-500 mb-6">SULTAN AREA</h2><p class="mb-8 text-gray-300 leading-relaxed">Traktir kopi developer biar semangat update! ☕</p><div class="bg-white p-4 rounded-xl inline-block mb-8"><img src="https://i.postimg.cc/VNnw27W2/qris.png" alt="QRIS Donation" class="w-48 h-48 object-contain"></div><div class="text-xs text-gray-500 uppercase tracking-widest">Dev by 【﻿ 𝕀𝕥𝕤𝕓𝕒𝕕 】</div></div>
+          <div class="glass-panel p-10 rounded-[20px] max-w-md">
+            <h2 class="text-4xl font-black font-cyber text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-yellow-500 mb-6">SULTAN AREA</h2>
+            <p class="mb-8 text-gray-300 leading-relaxed">Traktir kopi developer biar semangat update! ☕</p>
+            <div class="bg-white p-4 rounded-xl inline-block mb-8">
+               <img src="https://i.postimg.cc/VNnw27W2/qris.png" alt="QRIS Donation" class="w-48 h-48 md:w-64 md:h-64 object-contain">
+            </div>
+            <div class="text-xs text-gray-500 uppercase tracking-widest">Dev by 【﻿ 𝕀𝕥𝕤𝕓𝕒𝕕 】</div>
+          </div>
         </div>
       </div>
+
     </div>
   </div>
 
   <script>
-    // ==========================================
-    // PASTE LINK SCRIPT TERBARU ANDA DI SINI:
-    const API_URL = "https://script.google.com/macros/s/AKfycbwf4gXgoFjMX0VbPEeFL_uwEK9l_JKUAUODsmfrI4CWZeKBWk6j9ZKyD6oKn2uagEuS/exec";
-    // ==========================================
+    // ========================================================
+    // LINK SCRIPT BARU ANDA (PASTIKAN SUDAH DEPLOY NEW VERSION)
+    const API_URL = "https://script.google.com/macros/s/AKfycbwBTo6kaeM3xA5OsVTPBS3k9qlSpb4xupJ5rc5ge9y9NgxQLFc8Gaz2moeZCbkcdsYg/exec";
+    // ========================================================
     
     const STORAGE_EMAIL = 'kaltain_cloud_email';
     let currentUserEmail = null;
@@ -335,8 +346,12 @@
     let transactionData = [];
     let currentFilter = 'all';
 
+    // --- STARTUP ---
     window.onload = () => {
-      setTimeout(() => { document.getElementById('splash').style.opacity = '0'; setTimeout(() => { document.getElementById('splash').classList.add('hidden'); checkSession(); }, 700); }, 3000); 
+      setTimeout(() => {
+        document.getElementById('splash').style.opacity = '0';
+        setTimeout(() => { document.getElementById('splash').classList.add('hidden'); checkSession(); }, 700); 
+      }, 3000); 
     };
 
     function checkSession() {
@@ -375,7 +390,7 @@
 
     function formatRupiah(num) { return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(num); }
 
-    // --- DOMPET LOGIC ---
+    // --- DOMPET LOGIC (ANTI CACHE) ---
     async function fetchDataCloud() {
       const statusEl = document.getElementById('statusSync');
       const loader = document.getElementById('loadingList');
@@ -416,26 +431,35 @@
         if (currentVal && html.includes(currentVal)) selectBox.value = currentVal;
     }
 
+    // LOGIKA HAPUS
     function hapusDataCloud() {
       if(confirm("Hapus SEMUA riwayat transaksi?")) {
-        transactionData = []; renderDompet(); 
-        const btn = document.getElementById('btnHapus'); btn.innerHTML = "Wait..."; btn.disabled = true;
+        transactionData = []; 
+        renderDompet(); 
+        const btn = document.getElementById('btnHapus');
+        btn.innerHTML = "Wait..."; btn.disabled = true;
+        
         fetch(API_URL, {
-          method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' },
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email: currentUserEmail, action: 'reset' })
         }).then(() => {
-           setTimeout(() => { fetchDataCloud(); btn.innerHTML = '<i class="fas fa-bomb"></i> Reset'; btn.disabled = false; }, 2500);
+           setTimeout(() => { fetchDataCloud(); btn.innerHTML = '<i class="fas fa-bomb mr-1"></i> Reset'; btn.disabled = false; }, 2500);
         });
       }
     }
 
     function hapusSatuData(id) {
       if(confirm("Hapus transaksi ini?")) {
-        transactionData = transactionData.filter(t => String(t.id) !== String(id)); renderDompet(); 
+        transactionData = transactionData.filter(t => String(t.id) !== String(id));
+        renderDompet(); 
         fetch(API_URL, {
-          method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' },
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email: currentUserEmail, action: 'delete_one', id: id })
-        });
+        }).then(() => { console.log("Deleted on server"); });
       }
     }
 
@@ -510,50 +534,7 @@
       }).catch(err => { alert("Gagal."); btn.innerHTML = originalText; btn.disabled = false; });
     }
 
-    // --- KALKULATOR TANGGAL BARU (LENGKAP) ---
-    function hitungSelisih() {
-      const d1Input = document.getElementById('date1').value;
-      const d2Input = document.getElementById('date2').value;
-
-      if (!d1Input || !d2Input) return alert("Pilih tanggal & waktu lengkap!");
-
-      const date1 = new Date(d1Input);
-      const date2 = new Date(d2Input);
-
-      // Hitung selisih milliseconds
-      let diff = date2 - date1;
-      let label = "";
-      
-      if (diff < 0) {
-          diff = Math.abs(diff);
-          label = " (Mundur)";
-      }
-
-      // Konversi satuan
-      const seconds = Math.floor((diff / 1000) % 60);
-      const minutes = Math.floor((diff / (1000 * 60)) % 60);
-      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-
-      // Hitung Tahun & Bulan (Perkiraan)
-      let years = 0;
-      let months = 0;
-      let remainingDays = days;
-
-      if(remainingDays >= 365) {
-          years = Math.floor(remainingDays / 365);
-          remainingDays = remainingDays % 365;
-      }
-      if(remainingDays >= 30) {
-          months = Math.floor(remainingDays / 30);
-          remainingDays = remainingDays % 30;
-      }
-
-      const resultText = `${years} Tahun, ${months} Bulan, ${remainingDays} Hari\n${hours} Jam, ${minutes} Menit, ${seconds} Detik${label}`;
-      document.getElementById('hasilSelisih').innerText = resultText;
-    }
-
-    // --- FITUR LAIN (TETAP SAMA) ---
+    // OFFLINE FEATURES
     function hitungTarget() {
       const fields = ['jmlPeriode', 'hBeli', 'hJual', 'bVariabel', 'bOperasional', 'tLaba']; const vals = {};
       fields.forEach(f => vals[f] = parseFloat(document.getElementById(f).value) || 0);
@@ -574,6 +555,47 @@
     function clearCalc() { calcStr = ''; document.getElementById('calcDisplay').value = '0'; }
     function delCalc() { calcStr = calcStr.slice(0, -1); document.getElementById('calcDisplay').value = calcStr || '0'; }
     function calcResult() { try { const res = Function('"use strict";return (' + calcStr.replace(/[^0-9\+\-\*\/\.]/g, '') + ')')(); document.getElementById('calcDisplay').value = res; calcStr = String(res); } catch (e) { document.getElementById('calcDisplay').value = "Error"; calcStr = ''; } }
+    
+    // --- NEW: DATE CALC (LENGKAP) ---
+    function hitungSelisihLengkap() {
+      const d1Str = document.getElementById('date1').value;
+      const d2Str = document.getElementById('date2').value;
+      
+      if(!d1Str || !d2Str) return alert("Pilih Tanggal & Waktu dulu!");
+      
+      let start = new Date(d1Str);
+      let end = new Date(d2Str);
+      
+      // Pastikan start lebih kecil dari end
+      if(start > end) { const temp = start; start = end; end = temp; }
+      
+      let years = end.getFullYear() - start.getFullYear();
+      let months = end.getMonth() - start.getMonth();
+      let days = end.getDate() - start.getDate();
+      let hours = end.getHours() - start.getHours();
+      let minutes = end.getMinutes() - start.getMinutes();
+      let seconds = end.getSeconds() - start.getSeconds();
+      
+      // Adjust logic (Borrowing)
+      if (seconds < 0) { minutes--; seconds += 60; }
+      if (minutes < 0) { hours--; minutes += 60; }
+      if (hours < 0) { days--; hours += 24; }
+      if (days < 0) {
+          months--;
+          // Cari hari di bulan sebelumnya
+          let prevMonth = new Date(end.getFullYear(), end.getMonth(), 0);
+          days += prevMonth.getDate();
+      }
+      if (months < 0) { years--; months += 12; }
+      
+      document.getElementById('hasilLengkap').classList.remove('hidden');
+      document.getElementById('txtHasil').innerHTML = `
+        <span class="text-cyan-400">${years}</span> Thn, 
+        <span class="text-purple-400">${months}</span> Bln, 
+        <span class="text-green-400">${days}</span> Hr <br>
+        <span class="text-yellow-400 text-base mt-1 block">${hours} Jam : ${minutes} Menit : ${seconds} Detik</span>
+      `;
+    }
   </script>
 </body>
 </html>
