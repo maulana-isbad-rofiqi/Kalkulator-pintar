@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KALTAIN • Ultimate Tools</title>
+  <title>KALTAIN • Kalkulator Target Pintar</title>
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -122,10 +122,17 @@
   <div class="bg-aurora"></div>
   
   <div id="splash" class="fixed inset-0 z-[100] bg-black flex flex-col items-center justify-center transition-opacity duration-700">
-    <h1 class="font-cyber text-6xl md:text-8xl font-black tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-pink-500 to-cyan-400 animate-pulse">
-      KALTAIN
-    </h1>
-    <p class="mt-8 text-gray-400 font-mono text-sm tracking-widest">INITIALIZING SYSTEM...</p>
+    <div class="text-center space-y-2">
+        <h1 class="font-cyber text-6xl md:text-8xl font-black tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-pink-500 to-cyan-400 animate-pulse">
+          KALTAIN
+        </h1>
+        <p class="text-white font-cyber text-lg md:text-xl tracking-widest uppercase">
+          Kalkulator Target Pintar
+        </p>
+        <p class="text-gray-500 font-mono text-sm mt-6">
+          By 【﻿ 𝕀𝕥𝕤𝕓𝕒𝕕 】 Development
+        </p>
+    </div>
   </div>
 
   <div id="authContainer" class="fixed inset-0 z-50 flex items-center justify-center hidden px-4">
@@ -183,7 +190,15 @@
         <div class="flex items-center justify-between h-20">
           <div class="flex items-center gap-3" onclick="show('menu')" style="cursor:pointer">
             <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center font-cyber font-bold text-xl shadow-[0_0_15px_rgba(168,85,247,0.5)]">K</div>
-            <span class="font-cyber text-2xl font-bold tracking-wide bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">KALTAIN</span>
+            
+            <div class="flex flex-col justify-center">
+                <span class="font-cyber text-xl md:text-2xl font-bold tracking-wide bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400 leading-none">
+                    KALTAIN
+                </span>
+                <span class="text-[10px] md:text-[11px] text-cyan-400 font-mono uppercase tracking-wider opacity-80">
+                    Kalkulator Target Pintar
+                </span>
+            </div>
           </div>
 
           <div class="flex items-center gap-4">
@@ -310,14 +325,22 @@
              </div>
           </div>
           
-          <div class="glass-panel p-6 rounded-2xl max-h-[500px] overflow-y-auto relative">
+          <div class="glass-panel p-6 rounded-2xl max-h-[600px] overflow-y-auto relative">
              <div class="flex justify-between items-end mb-4 border-b border-white/10 pb-2 sticky top-0 bg-[#141419] z-10">
-               <h3 class="font-bold">Riwayat Terakhir</h3>
+               <h3 class="font-bold">Riwayat</h3>
                <button onclick="hapusDataDompet()" class="text-xs text-red-400 hover:text-red-300 border border-red-500/30 px-3 py-1 rounded-lg hover:bg-red-500/20 transition">
                  <i class="fas fa-trash-alt mr-1"></i> Reset Data
                </button>
              </div>
+             
              <div id="riwayatContainer" class="space-y-3"></div>
+             
+             <div id="showAllBtnContainer" class="mt-4 text-center hidden">
+                <button onclick="toggleShowAll()" id="btnShowAll" class="text-sm text-cyan-400 hover:text-white hover:underline transition">
+                    Lihat Semua Riwayat
+                </button>
+             </div>
+
           </div>
         </div>
       </div>
@@ -411,6 +434,7 @@
     const DATA_KEY_PREFIX = 'kaltain_data_';
     let currentUser = null;
     let currentTransType = '';
+    let isShowAllHistory = false; // State untuk menampilkan semua riwayat
 
     // --- SPLASH & AUTH FLOW ---
     window.onload = () => {
@@ -420,7 +444,7 @@
           document.getElementById('splash').classList.add('hidden');
           checkSession();
         }, 700); 
-      }, 2500); 
+      }, 3000); // Agak lama sedikit biar subtitle terbaca
     };
 
     function checkSession() {
@@ -600,7 +624,6 @@
       document.getElementById('ketTransaksi').value = '';
     }
 
-    // --- NEW FEATURE: HAPUS DATA DOMPET ---
     function hapusDataDompet() {
       if(confirm("PERINGATAN: Anda yakin ingin menghapus SEMUA data transaksi di dompet? Data yang dihapus tidak bisa dikembalikan.")) {
         const data = getUserData();
@@ -609,6 +632,14 @@
         updateDompetUI();
         alert("Data dompet berhasil direset bersih!");
       }
+    }
+
+    // Fungsi Baru: Toggle Show All
+    function toggleShowAll() {
+        isShowAllHistory = !isShowAllHistory;
+        const btn = document.getElementById('btnShowAll');
+        btn.textContent = isShowAllHistory ? "Tutup Riwayat" : "Lihat Semua Riwayat";
+        updateDompetUI();
     }
 
     function updateDompetUI() {
@@ -628,6 +659,7 @@
         }
       });
 
+      // Update Kartu Ringkasan
       document.getElementById('ringkasanDompet').innerHTML = `
         <div class="glass-panel p-6 rounded-2xl bg-gradient-to-br from-purple-900/40 to-transparent">
           <div class="text-gray-400 text-sm mb-1">Saldo Saat Ini</div>
@@ -643,26 +675,41 @@
         </div>
       `;
 
+      // Update List UI dengan Logika Show All
       const listCont = document.getElementById('riwayatContainer');
+      const btnContainer = document.getElementById('showAllBtnContainer');
+
       if(sorted.length === 0) {
         listCont.innerHTML = '<div class="text-center text-gray-500 mt-4">Belum ada transaksi</div>';
+        btnContainer.classList.add('hidden');
       } else {
+        // Jika isShowAllHistory true, tampilkan semua, jika false tampilkan 15
+        const limit = isShowAllHistory ? sorted.length : 15;
+        const itemsToShow = sorted.slice(0, limit);
+
         let html = '';
-        sorted.slice(0, 15).forEach(t => { 
+        itemsToShow.forEach(t => { 
           const color = t.type === 'pemasukan' ? 'text-green-400' : 'text-red-400';
           const sign = t.type === 'pemasukan' ? '+' : '-';
           const dateObj = new Date(t.date);
           html += `
-            <div class="flex justify-between items-center p-3 hover:bg-white/5 rounded-lg transition border-b border-white/5">
+            <div class="flex justify-between items-center p-3 hover:bg-white/5 rounded-lg transition border-b border-white/5 fade-in">
               <div>
                 <div class="font-bold text-sm">${t.desc}</div>
-                <div class="text-xs text-gray-500">${dateObj.toLocaleDateString('id-ID')}</div>
+                <div class="text-xs text-gray-500">${dateObj.toLocaleDateString('id-ID')} ${dateObj.getHours()}:${String(dateObj.getMinutes()).padStart(2,'0')}</div>
               </div>
               <div class="font-mono font-bold ${color}">${sign} ${t.amount.toLocaleString()}</div>
             </div>
           `;
         });
         listCont.innerHTML = html;
+
+        // Tampilkan tombol "Lihat Semua" hanya jika data lebih dari 15
+        if (sorted.length > 15) {
+            btnContainer.classList.remove('hidden');
+        } else {
+            btnContainer.classList.add('hidden');
+        }
       }
     }
 
