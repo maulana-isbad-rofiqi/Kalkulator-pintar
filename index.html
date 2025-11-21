@@ -1,289 +1,280 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" class="scroll-smooth">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Kaltain Web – Target & Dompet</title>
+  <title>Kaltain Web — Target & Dompet Keren</title>
+  <meta name="description" content="Hitung target penjualan & catat keuangan pribadi dengan gaya! 100% gratis, tanpa login."/>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet">
+
+  <!-- Tailwind + Animations -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lottie-web@5.12.2/build/player/lottie.min.js"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
+
   <style>
-    body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; }
-    .card { background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); }
-    .btn-primary { background: #667eea; }
-    .btn-primary:hover { background: #5a67d8; }
-    .btn-success { background: #48bb78; }
-    .btn-danger  { background: #f56565; }
+    body { font-family: 'Inter', sans-serif; background: linear-gradient(-45deg, #1e1b4b, #1e3a8a, #0f172a, #0d9488); background-size: 400% 400%; animation: gradient 15s ease infinite; min-height: 100vh; }
+    @keyframes gradient { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
+    .glass { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.15); }
+    .title { font-family: 'Space Grotesk', sans-serif; }
+    .btn { transition: all 0.3s ease; transform: translateY(0); }
+    .btn:hover { transform: translateY(-4px); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3); }
+    .section { animation: fadeIn 0.6s ease-out forwards; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .dark-mode { background: #0f172a; color: #e2e8f0; }
   </style>
 </head>
-<body class="text-gray-800 flex items-center justify-center p-4">
-<div class="card w-full max-w-2xl rounded-2xl shadow-2xl p-8">
-  <h1 class="text-4xl font-bold text-center mb-2 text-indigo-700">Kaltain Web</h1>
-  <p class="text-center text-gray-600 mb-8">Target Penjualan • Dompet Pribadi • Tanpa Login</p>
+<body class="text-white flex items-center justify-center p-4">
 
-  <!-- MENU UTAMA -->
-  <div id="menu" class="grid grid-cols-2 gap-4 mb-8">
-    <button onclick="showSection('kalkulasi')" class="btn-primary text-white py-4 rounded-xl text-lg font-medium shadow-lg">
-      Kalkulasi Target
-    </button>
-    <button onclick="showSection('dompet')" class="btn-primary text-white py-4 rounded-xl text-lg font-medium shadow-lg">
-      Dompet Saya
-    </button>
-    <button onclick="showSection('sultan')" class="bg-yellow-500 hover:bg-yellow-600 text-white py-4 rounded-xl text-lg font-medium shadow-lg col-span-2">
-      Sultan (Donasi)
-    </button>
-    <button onclick="showSection('about')" class="bg-gray-600 hover:bg-gray-700 text-white py-4 rounded-xl text-lg font-medium shadow-lg col-span-2">
-      About
-    </button>
+<div class="glass w-full max-w-4xl rounded-3xl shadow-2xl overflow-hidden">
+  <!-- Header -->
+  <div class="bg-gradient-to-r from-purple-600 to-blue-700 p-8 text-center">
+    <h1 class="title text-5xl md:text-6xl font-black mb-2">Kaltain</h1>
+    <p class="text-lg opacity-90">Target Penjualan • Dompet • Tanpa Ribet</p>
   </div>
 
-  <!-- KALKULASI TARGET -->
-  <div id="kalkulasi" class="section hidden">
-    <h2 class="text-2xl font-bold mb-4">Kalkulasi Target Penjualan</h2>
-    <div class="space-y-4">
-      <div>
-        <label class="block font-medium">Periode</label>
-        <select id="unit" class="w-full p-3 border rounded-lg">
+  <!-- Lottie Animation (opsional) -->
+  <div id="lottie-container" class="h-32 -mt-16 pointer-events-none"></div>
+
+  <div class="p-8">
+
+    <!-- MENU UTAMA -->
+    <div id="menu" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <button onclick="show('kalkulasi')" class="btn glass p-8 rounded-2xl text-center hover:bg-white/20">
+        <div class="text-5xl mb-4">Target</div>
+        <div class="text-xl font-bold">Kalkulasi Target</div>
+      </button>
+
+      <button onclick="show('dompet')" class="btn glass p-8 rounded-2xl text-center hover:bg-white/20">
+        <div class="text-5xl mb-4">Wallet</div>
+        <div class="text-xl font-bold">Dompet Saya</div>
+      </button>
+
+      <button onclick="show('sultan')" class="btn col-span-full bg-gradient-to-r from-yellow-500 to-orange-600 p-8 rounded-2xl text-center shadow-xl">
+        <div class="text-5xl mb-4">Crown</div>
+        <div class="text-2xl font-bold">Area Sultan</div>
+      </button>
+
+      <button onclick="show('about')" class="btn glass p-6 rounded-2xl text-center text-sm opacity-80 hover:opacity-100">
+        <div class="text-3xl mb-2">Info</div>
+        <div>About Kaltain Web</div>
+      </button>
+    </div>
+
+    <!-- KALKULASI TARGET -->
+    <div id="kalkulasi" class="section hidden space-y-6 mt-8">
+      <h2 class="text-3xl font-bold text-center mb-8">Hitung Target Penjualan</h2>
+      <div class="grid md:grid-cols-2 gap-6">
+        <input type="number" placeholder="Jumlah periode (misal: 1)" id="jumlahPeriode" class="p-4 rounded-xl glass border border-white/30 focus:outline-none focus:border-white"/>
+        <select id="unit" class="p-4 rounded-xl glass border border-white/30">
           <option value="bulan">Bulan</option>
           <option value="tahun">Tahun</option>
         </select>
+        <input type="number" placeholder="Harga beli / modal" id="hargaProduk" class="p-4 rounded-xl glass border border-white/30"/>
+        <input type="number" placeholder="Harga jual" id="hargaJual" class="p-4 rounded-xl glass border border-white/30"/>
+        <input type="number" placeholder="Biaya variabel lain" id="biayaVariabel" class="p-4 rounded-xl glass border border-white/30"/>
+        <input type="number" placeholder="Biaya operasional bulanan" id="biayaOperasional" class="p-4 rounded-xl glass border border-white/30"/>
+        <input type="number" placeholder="Potongan platform (persen/nominal)" id="potonganPlatform" class="p-4 rounded-xl glass border border-white/30"/>
+        <input type="number" placeholder="Target laba bersih" id="targetLaba" class="p-4 rounded-xl glass border border-white/30"/>
       </div>
-      <input type="number" id="jumlahPeriode" placeholder="Jumlah periode (contoh: 1)" class="w-full p-3 border rounded-lg"/>
-      <input type="number" id="hargaProduk" placeholder="Harga beli / modal per item" class="w-full p-3 border rounded-lg"/>
-      <input type="number" id="hargaJual" placeholder="Harga jual per item" class="w-full p-3 border rounded-lg"/>
-      <input type="number" id="biayaVariabel" placeholder="Biaya variabel lain (packaging dll)" class="w-full p-3 border rounded-lg"/>
-      <input type="number" id="biayaOperasional" placeholder="Biaya operasional bulanan (gaji, sewa)" class="w-full p-3 border rounded-lg"/>
-      <input type="number" id="potonganPlatform" placeholder="Potongan platform (persen atau nominal)" class="w-full p-3 border rounded-lg"/>
-      <input type="number" id="targetLaba" placeholder="Target laba bersih yang diinginkan" class="w-full p-3 border rounded-lg"/>
-      <button onclick="hitungTarget()" class="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-bold">Hitung Target</button>
-    </div>
-    <pre id="hasilKalkulasi" class="mt-6 bg-gray-100 p-4 rounded-lg hidden whitespace-pre-wrap"></pre>
-    <button onclick="showSection('menu')" class="mt-4 text-indigo-600">Kembali</button>
-  </div>
-
-  <!-- DOMPET -->
-  <div id="dompet" class="section hidden">
-    <h2 class="text-2xl font-bold mb-4">Dompet Saya</h2>
-    <div id="ringkasanDompet" class="bg-indigo-50 p-4 rounded-lg mb-6 text-lg"></div>
-
-    <div class="grid grid-cols-2 gap-4 mb-6">
-      <button onclick="tambahTransaksi('pemasukan')" class="btn-success text-white py-3 rounded-lg font-bold">+ Pemasukan</button>
-      <button onclick="tambahTransaksi('pengeluaran')" class="btn-danger text-white py-3 rounded-lg font-bold">- Pengeluaran</button>
+      <button onclick="hitungTarget()" class="w-full bg-gradient-to-r from-green-500 to-emerald-600 py-5 rounded-2xl font-bold text-xl shadow-lg hover:shadow-2xl">HITUNG TARGET</button>
+      <pre id="hasilKalkulasi" class="hidden mt-6 p-6 bg-black/30 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap"></pre>
+      <button onclick="show('menu')" class="mt-4 text-center w-full text-yellow-400">Kembali ke Menu</button>
     </div>
 
-    <button onclick="tampilRiwayat()" class="w-full bg-gray-700 hover:bg-gray-800 text-white py-3 rounded-lg mb-4">Lihat Riwayat</button>
-    <button onclick="hapusSemuaData()" class="w-full bg-red-600 hover:bg-red-700 text-white py-3 rounded-lg">Hapus Semua Data</button>
+    <!-- DOMPET -->
+    <div id="dompet" class="section hidden">
+      <h2 class="text-3xl font-bold text-center mb-8">Dompet Saya</h2>
+      <div id="ringkasanDompet" class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10 text-center"></div>
 
-    <div id="formTransaksi" class="hidden mt-6 space-y-4">
-      <input type="number" id="jumlahTransaksi" placeholder="Jumlah (Rp)" class="w-full p-3 border rounded-lg"/>
-      <input type="text" id="ketTransaksi" placeholder="Keterangan" class="w-full p-3 border rounded-lg"/>
-      <button onclick="simpanTransaksi()" class="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg">Simpan</button>
+      <div class="grid grid-cols-2 gap-6 mb-8">
+        <button onclick="tambah('pemasukan')" class="bg-gradient-to-r from-green-500 to-emerald-600 py-6 rounded-2xl font-bold text-2xl shadow-lg">+ Pemasukan</button>
+        <button onclick="tambah('pengeluaran')" class="bg-gradient-to-r from-red-500 to-rose-600 py-6 rounded-2xl font-bold text-2xl shadow-lg">- Pengeluaran</button>
+      </div>
+
+      <button onclick="tampilRiwayat()" class="w-full bg-white/20 py-4 rounded-xl mb-4 font-semibold">Lihat Riwayat</button>
+      <button onclick="hapusSemua()" class="w-full bg-red-600/80 py-4 rounded-xl font-semibold">Hapus Semua Data</button>
+
+      <div id="formTransaksi" class="hidden mt-8 space-y-6">
+        <input type="number" id="jumlahTransaksi" placeholder="Masukkan jumlah (Rp)" class="w-full p-5 rounded-xl glass text-xl"/>
+        <input type="text" id="ketTransaksi" placeholder="Keterangan (opsional)" class="w-full p-5 rounded-xl glass text-xl"/>
+        <button onclick="simpan()" class="w-full bg-gradient-to-r from-cyan-500 to-blue-600 py-5 rounded-2xl font-bold text-xl">SIMPAN</button>
+      </div>
+
+      <div id="riwayatContainer" class="hidden mt-8 space-y-4"></div>
+      <button onclick="show('menu')" class="mt-8 text-center w-full text-yellow-400 text-lg">Kembali</button>
     </div>
 
-    <div id="riwayatContainer" class="hidden mt-6"></div>
-    <button onclick="showSection('menu')" class="mt-6 text-indigo-600">Kembali ke Menu</button>
-  </div>
+    <!-- SULTAN -->
+    <div id="sultan" class="section hidden text-center py-12">
+      <h2 class="text-5xl font-black mb-6 bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">Area Sultan</h2>
+      <p class="text-xl mb-10 opacity-90">Sedekah tidak akan mengurangi hartamu</p>
+      <img src="https://i.postimg.cc/VNnw27W2/qris.png" alt="QRIS Kaltain" class="mx-auto rounded-3xl shadow-2xl max-w-xs border-8 border-white/30"/>
+      <p class="mt-8 text-2xl font-bold">Builder: Itsbad</p>
+      <button onclick="show('menu')" class="mt-12 bg-yellow-500 text-black px-12 py-5 rounded-full font-bold text-xl shadow-2xl hover:bg-yellow-400">Kembali</button>
+    </div>
 
-  <!-- SULTAN -->
-  <div id="sultan" class="section hidden text-center">
-    <h2 class="text-3xl font-bold mb-6">Sultan Area</h2>
-    <p class="mb-6 text-lg">Sedekah tidak akan mengurangi hartamu.</p>
-    <!-- Ganti URL gambar QRIS kamu di sini -->
-    <img src="https://i.ibb.co/YourQRISLink/qris.jpg" alt="QRIS Donasi" class="mx-auto rounded-lg shadow-lg max-w-xs"/>
-    <p class="mt-6 text-gray-600">Builder: Itsbad</p>
-    <button onclick="showSection('menu')" class="mt-8 text-indigo-600">Kembali</button>
-  </div>
+    <!-- ABOUT -->
+    <div id="about" class="section hidden text-center space-y-6 py-12">
+      <h2 class="text-4xl font-bold mb-8">Tentang Kaltain Web</h2>
+      <p class="text-lg leading-relaxed max-w-2xl mx-auto opacity-90">
+        Versi website premium dari <strong>@KaltainBot</strong> di Telegram.<br><br>
+        Dibuat khusus buat kamu yang suka tampilan keren, simpel, dan langsung bisa pakai tanpa install apa-apa.<br><br>
+        Semua data tersimpan di browser kamu → 100% private.<br><br>
+        Dibuat dengan <span class="text-red-500">♥</span> oleh <strong>Itsbad</strong> • 2025
+      </p>
+      <button onclick="show('menu')" class="mt-10 bg-gradient-to-r from-purple-600 to-pink-600 px-12 py-5 rounded-full font-bold text-xl shadow-2xl">Kembali ke Menu</button>
+    </div>
 
-  <!-- ABOUT -->
-  <div id="about" class="section hidden">
-    <h2 class="text-2xl font-bold mb-4">About Kaltain Web</h2>
-    <p class="leading-relaxed text-gray-700">
-      Kaltain Web adalah versi website dari bot Telegram @KaltainBot yang dibuat oleh <strong>Itsbad</strong>.<br><br>
-      Fitur utama:<br>
-      • Kalkulasi target penjualan & laba bersih<br>
-      • Pencatatan dompet (pemasukan/pengeluaran)<br>
-      • Riwayat transaksi + arsip bulanan<br>
-      • 100% offline – data disimpan di browser kamu<br><br>
-      Semua fitur gratis selamanya. Dukung developer lewat menu Sultan jika kamu suka!<br><br>
-      Versi: 1.0 • 21 Nov 2025
-    </p>
-    <button onclick="showSection('menu')" class="mt-8 text-indigo-600">Kembali</button>
   </div>
 </div>
 
 <script>
-  const STORAGE_KEY = "kaltain_web_data";
-  let currentTipe = "";
+  const DATA_KEY = "kaltain_web_v2";
+  let tipeSekarang = "";
 
-  // Load data dari localStorage
-  function loadData() {
-    const data = localStorage.getItem(STORAGE_KEY);
-    return data ? JSON.parse(data) : { transactions: [] };
-  }
+  // Lottie (opsional – hapus kalau mau lebih ringan)
+  lottie.loadAnimation({
+    container: document.getElementById('lottie-container'),
+    renderer: 'svg',
+    loop: true,
+    autoplay: true,
+    path: 'https://assets9.lottiefiles.com/packages/lf20_kkflmtur.json' // money animation
+  });
 
-  function saveData(data) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-  }
+  function load() { return JSON.parse(localStorage.getItem(DATA_KEY) || '{"transactions":[]}') }
+  function save(d) { localStorage.setItem(DATA_KEY, JSON.stringify(d)) }
 
-  // Navigasi section
-  function showSection(id) {
+  function show(id) {
     document.querySelectorAll('.section').forEach(s => s.classList.add('hidden'));
     document.getElementById(id).classList.remove('hidden');
-    if (id === 'dompet') updateRingkasanDompet();
+    if (id === 'dompet') updateRingkasan();
   }
 
-  // ================== KALKULASI TARGET ==================
+  // Kalkulasi Target
   function hitungTarget() {
     const unit = document.getElementById('unit').value;
     const jumlah = parseFloat(document.getElementById('jumlahPeriode').value) || 0;
     const modal = parseFloat(document.getElementById('hargaProduk').value) || 0;
     const jual = parseFloat(document.getElementById('hargaJual').value) || 0;
-    const varLain = parseFloat(document.getElementById('biayaVariabel').value) || 0;
-    const opBulanan = parseFloat(document.getElementById('biayaOperasional').value) || 0;
+    const variabel = parseFloat(document.getElementById('biayaVariabel').value) || 0;
+    const operasional = parseFloat(document.getElementById('biayaOperasional').value) || 0;
     const potongan = parseFloat(document.getElementById('potonganPlatform').value) || 0;
     const targetLaba = parseFloat(document.getElementById('targetLaba').value) || 0;
 
     const hari = unit === 'bulan' ? jumlah * 30 : jumlah * 365;
-    const labaPerItem = jual - modal - potongan - varLain;
-    const biayaTetap = opBulanan * (hari / 30);
+    const labaPerItem = jual - modal - variabel - potongan;
+    const biayaTetap = operasional * (hari / 30);
 
-    if (labaPerItem <= 0) {
-      alert("Harga jual harus lebih tinggi dari total biaya per item!");
-      return;
-    }
+    if (labaPerItem <= 0) return alert("Harga jual harus lebih tinggi dari total biaya!");
 
     const totalProduk = Math.ceil((targetLaba + biayaTetap) / labaPerItem);
-    const perHari = Math.ceil(totalProduk / hari);
-    const untukBiaya = Math.ceil(biayaTetap / labaPerItem);
-    const untukLaba = totalProduk - untukBiaya;
+    const harian = Math.ceil(totalProduk / hari);
+    const untukBEP = Math.ceil(biayaTetap / labaPerItem);
+    const untukLaba = totalProduk - untukBEP;
 
-    const hasil = `
-HASIL TARGET PENJUALAN
-═════════════════════════════
-Periode      : \( {jumlah} \){unit === 'bulan' ? 'Bulan' : 'Tahun'} (${hari} hari)
-Target Laba  : Rp ${targetLaba.toLocaleString()}
-═════════════════════════════
+    const hasil = `HASIL TARGET
+════════════════════════
+Periode       : \( {jumlah} \){unit === 'bulan' ? 'Bulan' : 'Tahun'} (${hari} hari)
+Target Laba   : Rp ${targetLaba.toLocaleString('id-ID')}
 
 TARGET PENJUALAN
-Total Produk : ${totalProduk} unit
-Rata-rata    : ${perHari} unit/hari
+Total Produk  : ${totalProduk.toLocaleString()} unit
+Rata-rata     : ${harian.toLocaleString()} unit/hari
 
 LABA PER ITEM
-Harga Jual   : Rp ${jual.toLocaleString()}
-- Modal      : Rp ${modal.toLocaleString()}
-- Potongan   : Rp ${potongan.toLocaleString()}
-- Variabel   : Rp ${varLain.toLocaleString()}
+Harga Jual    : Rp ${jual.toLocaleString()}
+− Modal       : Rp ${modal.toLocaleString()}
+− Variabel    : Rp ${variabel.toLocaleString()}
+− Potongan    : Rp ${potongan.toLocaleString()}
 ────────────────────────────────
-Laba Bersih  : Rp ${labaPerItem.toLocaleString()}
+Laba Bersih   : Rp ${labaPerItem.toLocaleString()}
 
 ALOKASI
-Untuk BEP    : ${untukBiaya} unit
-Untuk Laba   : ${untukLaba} unit
+BEP (biaya)   : ${untukBEP.toLocaleString()} unit
+Laba Bersih   : ${untukLaba.toLocaleString()} unit
 ────────────────────────────────
-Total        : ${totalProduk} unit
-    `.trim();
+Total         : ${totalProduk.toLocaleString()} unit`;
 
-    const el = document.getElementById('hasilKalkulasi');
-    el.textContent = hasil;
-    el.classList.remove('hidden');
+    document.getElementById('hasilKalkulasi').classList.remove('hidden');
+    document.getElementById('hasilKalkulasi').textContent = hasil;
   }
 
-  // ================== DOMPET ==================
-  function updateRingkasanDompet() {
-    const data = loadData();
+  // Dompet
+  function updateRingkasan() {
+    const data = load();
     const now = new Date();
-    const bulanIni = now.getMonth();
-    const tahunIni = now.getFullYear();
-
-    let saldo = 0;
-    let masukBulan = 0;
-    let keluarBulan = 0;
+    let saldo = 0, masukBulan = 0, keluarBulan = 0;
 
     data.transactions.forEach(t => {
-      const date = new Date(t.timestamp);
-      if (t.tipe === 'pemasukan') {
-        saldo += t.jumlah;
-        if (date.getMonth() === bulanIni && date.getFullYear() === tahunIni) masukBulan += t.jumlah;
-      } else {
-        saldo -= t.jumlah;
-        if (date.getMonth() === bulanIni && date.getFullYear() === tahunIni) keluarBulan += t.jumlah;
-      }
+      const d = new Date(t.timestamp);
+      if (t.tipe === 'pemasukan') { saldo += t.jumlah; if (d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()) masukBulan += t.jumlah; }
+      else { saldo -= t.jumlah; if (d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()) keluarBulan += t.jumlah; }
     });
 
     document.getElementById('ringkasanDompet').innerHTML = `
-      <div class="font-bold text-2xl">Saldo: Rp ${saldo.toLocaleString()}</div>
-      <div>Pemasukan bulan ini: Rp ${masukBulan.toLocaleString()}</div>
-      <div>Pengeluaran bulan ini: Rp ${keluarBulan.toLocaleString()}</div>
+      <div class="glass p-6 rounded-2xl"><div class="text-4xl font-black">Rp ${saldo.toLocaleString('id-ID')}</div><div class="text-sm opacity-80">Saldo Saat Ini</div></div>
+      <div class="glass p-6 rounded-2xl"><div class="text-3xl font-bold text-green-400">+ Rp ${masukBulan.toLocaleString('id-ID')}</div><div class="text-sm opacity-80">Pemasukan Bulan Ini</div></div>
+      <div class="glass p-6 rounded-2xl"><div class="text-3xl font-bold text-red-400">- Rp ${keluarBulan.toLocaleString('id-ID')}</div><div class="text-sm opacity-80">Pengeluaran Bulan Ini</div></div>
     `;
   }
 
-  function tambahTransaksi(tipe) {
-    currentTipe = tipe;
+  function tambah(tipe) {
+    tipeSekarang = tipe;
     document.getElementById('formTransaksi').classList.remove('hidden');
-    document.getElementById('jumlahTransaksi').focus();
   }
 
-  function simpanTransaksi() {
+  function simpan() {
     const jumlah = parseFloat(document.getElementById('jumlahTransaksi').value);
     const ket = document.getElementById('ketTransaksi').value.trim() || "Tanpa keterangan";
+    if (!jumlah || jumlah <= 0) return alert("Masukkan jumlah yang valid!");
 
-    if (isNaN(jumlah) || jumlah <= 0) {
-      alert("Masukkan jumlah yang valid!");
-      return;
-    }
+    const data = load();
+    data.transactions.push({ tipe: tipeSekarang, jumlah, keterangan: ket, timestamp: new Date().toISOString() });
+    save(data);
 
-    const data = loadData();
-    data.transactions.push({
-      tipe: currentTipe,
-      jumlah: jumlah,
-      keterangan: ket,
-      timestamp: new Date().toISOString()
-    });
-    saveData(data);
-
-    alert(`\( {currentTipe === 'pemasukan' ? 'Pemasukan' : 'Pengeluaran'} Rp \){jumlah.toLocaleString()} berhasil dicatat!`);
+    alert(`\( {tipeSekarang === 'pemasukan' ? 'Pemasukan' : 'Pengeluaran'} Rp \){jumlah.toLocaleString()} berhasil dicatat!`);
     document.getElementById('formTransaksi').classList.add('hidden');
     document.getElementById('jumlahTransaksi').value = '';
     document.getElementById('ketTransaksi').value = '';
-    updateRingkasanDompet();
+    updateRingkasan();
   }
 
   function tampilRiwayat() {
-    const data = loadData();
-    const container = document.getElementById('riwayatContainer');
-    container.classList.remove('hidden');
-    container.innerHTML = "<h3 class='text-xl font-bold mb-4'>Riwayat Transaksi (10 terakhir)</h3>";
+    const data = load().transactions.slice(-15).reverse();
+    const cont = document.getElementById('riwayatContainer');
+    cont.classList.remove('hidden');
+    cont.innerHTML = "<h3 class='text-2xl font-bold mb-6 text-center'>Riwayat Terakhir</h3><div class='space-y-4'>";
 
-    const recent = data.transactions.slice(-10).reverse();
-    if (recent.length === 0) {
-      container.innerHTML += "<p>Belum ada transaksi.</p>";
-      return;
-    }
-
-    let html = "<div class='space-y-2'>";
-    recent.forEach(t => {
-      const date = new Date(t.timestamp);
+    data.forEach(t => {
+      const d = new Date(t.timestamp);
       const ico = t.tipe === 'pemasukan' ? '↑' : '↓';
-      const warna = t.tipe === 'pemasukan' ? 'text-green-600' : 'text-red-600';
-      html += `<div class='bg-gray-50 p-3 rounded-lg'>
-        <div class='\( {warna} font-bold'> \){ico} Rp ${t.jumlah.toLocaleString()}</div>
-        <div class='text-sm'>${t.keterangan}</div>
-        <div class='text-xs text-gray-500'>\( {date.toLocaleDateString('id-ID')} \){date.toTimeString().substr(0,5)}</div>
-      </div>`;
+      const warna = t.tipe === 'pemasukan' ? 'text-green-400' : 'text-red-400';
+      cont.innerHTML += `
+        <div class='glass p-5 rounded-2xl'>
+          <div class='flex justify-between items-center'>
+            <div class='\( {warna} text-2xl font-black'> \){ico} Rp ${t.jumlah.toLocaleString()}</div>
+            <div class='text-sm opacity-70'>\( {d.toLocaleDateString('id-ID')} \){d.toTimeString().substr(0,5)}</div>
+          </div>
+          <div class='mt-2 text-lg'>${t.keterangan}</div>
+        </div>`;
     });
-    html += "</div>";
-    container.innerHTML += html;
+    cont.innerHTML += "</div>";
   }
 
-  function hapusSemuaData() {
+  function hapusSemua() {
     if (confirm("Yakin hapus SEMUA data dompet?")) {
-      localStorage.removeItem(STORAGE_KEY);
-      alert("Data dompet telah dihapus.");
-      updateRingkasanDompet();
+      localStorage.removeItem(DATA_KEY);
+      alert("Data telah dihapus!");
+      updateRingkasan();
     }
   }
 
   // Init
-  showSection('menu');
+  show('menu');
+  updateRingkasan();
 </script>
 </body>
 </html>
