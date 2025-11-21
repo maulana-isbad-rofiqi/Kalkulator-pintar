@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Kaltain Web – Target & Dompet</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
+  <style>
+    body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; }
+    .card { background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); }
+    .btn-primary { background: #667eea; }
+    .btn-primary:hover { background: #5a67d8; }
+    .btn-success { background: #48bb78; }
+    .btn-danger  { background: #f56565; }
+  </style>
+</head>
+<body class="text-gray-800 flex items-center justify-center p-4">
+<div class="card w-full max-w-2xl rounded-2xl shadow-2xl p-8">
+  <h1 class="text-4xl font-bold text-center mb-2 text-indigo-700">Kaltain Web</h1>
+  <p class="text-center text-gray-600 mb-8">Target Penjualan • Dompet Pribadi • Tanpa Login</p>
+
+  <!-- MENU UTAMA -->
+  <div id="menu" class="grid grid-cols-2 gap-4 mb-8">
+    <button onclick="showSection('kalkulasi')" class="btn-primary text-white py-4 rounded-xl text-lg font-medium shadow-lg">
+      Kalkulasi Target
+    </button>
+    <button onclick="showSection('dompet')" class="btn-primary text-white py-4 rounded-xl text-lg font-medium shadow-lg">
+      Dompet Saya
+    </button>
+    <button onclick="showSection('sultan')" class="bg-yellow-500 hover:bg-yellow-600 text-white py-4 rounded-xl text-lg font-medium shadow-lg col-span-2">
+      Sultan (Donasi)
+    </button>
+    <button onclick="showSection('about')" class="bg-gray-600 hover:bg-gray-700 text-white py-4 rounded-xl text-lg font-medium shadow-lg col-span-2">
+      About
+    </button>
+  </div>
+
+  <!-- KALKULASI TARGET -->
+  <div id="kalkulasi" class="section hidden">
+    <h2 class="text-2xl font-bold mb-4">Kalkulasi Target Penjualan</h2>
+    <div class="space-y-4">
+      <div>
+        <label class="block font-medium">Periode</label>
+        <select id="unit" class="w-full p-3 border rounded-lg">
+          <option value="bulan">Bulan</option>
+          <option value="tahun">Tahun</option>
+        </select>
+      </div>
+      <input type="number" id="jumlahPeriode" placeholder="Jumlah periode (contoh: 1)" class="w-full p-3 border rounded-lg"/>
+      <input type="number" id="hargaProduk" placeholder="Harga beli / modal per item" class="w-full p-3 border rounded-lg"/>
+      <input type="number" id="hargaJual" placeholder="Harga jual per item" class="w-full p-3 border rounded-lg"/>
+      <input type="number" id="biayaVariabel" placeholder="Biaya variabel lain (packaging dll)" class="w-full p-3 border rounded-lg"/>
+      <input type="number" id="biayaOperasional" placeholder="Biaya operasional bulanan (gaji, sewa)" class="w-full p-3 border rounded-lg"/>
+      <input type="number" id="potonganPlatform" placeholder="Potongan platform (persen atau nominal)" class="w-full p-3 border rounded-lg"/>
+      <input type="number" id="targetLaba" placeholder="Target laba bersih yang diinginkan" class="w-full p-3 border rounded-lg"/>
+      <button onclick="hitungTarget()" class="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-bold">Hitung Target</button>
+    </div>
+    <pre id="hasilKalkulasi" class="mt-6 bg-gray-100 p-4 rounded-lg hidden whitespace-pre-wrap"></pre>
+    <button onclick="showSection('menu')" class="mt-4 text-indigo-600">Kembali</button>
+  </div>
+
+  <!-- DOMPET -->
+  <div id="dompet" class="section hidden">
+    <h2 class="text-2xl font-bold mb-4">Dompet Saya</h2>
+    <div id="ringkasanDompet" class="bg-indigo-50 p-4 rounded-lg mb-6 text-lg"></div>
+
+    <div class="grid grid-cols-2 gap-4 mb-6">
+      <button onclick="tambahTransaksi('pemasukan')" class="btn-success text-white py-3 rounded-lg font-bold">+ Pemasukan</button>
+      <button onclick="tambahTransaksi('pengeluaran')" class="btn-danger text-white py-3 rounded-lg font-bold">- Pengeluaran</button>
+    </div>
+
+    <button onclick="tampilRiwayat()" class="w-full bg-gray-700 hover:bg-gray-800 text-white py-3 rounded-lg mb-4">Lihat Riwayat</button>
+    <button onclick="hapusSemuaData()" class="w-full bg-red-600 hover:bg-red-700 text-white py-3 rounded-lg">Hapus Semua Data</button>
+
+    <div id="formTransaksi" class="hidden mt-6 space-y-4">
+      <input type="number" id="jumlahTransaksi" placeholder="Jumlah (Rp)" class="w-full p-3 border rounded-lg"/>
+      <input type="text" id="ketTransaksi" placeholder="Keterangan" class="w-full p-3 border rounded-lg"/>
+      <button onclick="simpanTransaksi()" class="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg">Simpan</button>
+    </div>
+
+    <div id="riwayatContainer" class="hidden mt-6"></div>
+    <button onclick="showSection('menu')" class="mt-6 text-indigo-600">Kembali ke Menu</button>
+  </div>
+
+  <!-- SULTAN -->
+  <div id="sultan" class="section hidden text-center">
+    <h2 class="text-3xl font-bold mb-6">Sultan Area</h2>
+    <p class="mb-6 text-lg">Sedekah tidak akan mengurangi hartamu.</p>
+    <!-- Ganti URL gambar QRIS kamu di sini -->
+    <img src="https://i.ibb.co/YourQRISLink/qris.jpg" alt="QRIS Donasi" class="mx-auto rounded-lg shadow-lg max-w-xs"/>
+    <p class="mt-6 text-gray-600">Builder: Itsbad</p>
+    <button onclick="showSection('menu')" class="mt-8 text-indigo-600">Kembali</button>
+  </div>
+
+  <!-- ABOUT -->
+  <div id="about" class="section hidden">
+    <h2 class="text-2xl font-bold mb-4">About Kaltain Web</h2>
+    <p class="leading-relaxed text-gray-700">
+      Kaltain Web adalah versi website dari bot Telegram @KaltainBot yang dibuat oleh <strong>Itsbad</strong>.<br><br>
+      Fitur utama:<br>
+      • Kalkulasi target penjualan & laba bersih<br>
+      • Pencatatan dompet (pemasukan/pengeluaran)<br>
+      • Riwayat transaksi + arsip bulanan<br>
+      • 100% offline – data disimpan di browser kamu<br><br>
+      Semua fitur gratis selamanya. Dukung developer lewat menu Sultan jika kamu suka!<br><br>
+      Versi: 1.0 • 21 Nov 2025
+    </p>
+    <button onclick="showSection('menu')" class="mt-8 text-indigo-600">Kembali</button>
+  </div>
+</div>
+
+<script>
+  const STORAGE_KEY = "kaltain_web_data";
+  let currentTipe = "";
+
+  // Load data dari localStorage
+  function loadData() {
+    const data = localStorage.getItem(STORAGE_KEY);
+    return data ? JSON.parse(data) : { transactions: [] };
+  }
+
+  function saveData(data) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  }
+
+  // Navigasi section
+  function showSection(id) {
+    document.querySelectorAll('.section').forEach(s => s.classList.add('hidden'));
+    document.getElementById(id).classList.remove('hidden');
+    if (id === 'dompet') updateRingkasanDompet();
+  }
+
+  // ================== KALKULASI TARGET ==================
+  function hitungTarget() {
+    const unit = document.getElementById('unit').value;
+    const jumlah = parseFloat(document.getElementById('jumlahPeriode').value) || 0;
+    const modal = parseFloat(document.getElementById('hargaProduk').value) || 0;
+    const jual = parseFloat(document.getElementById('hargaJual').value) || 0;
+    const varLain = parseFloat(document.getElementById('biayaVariabel').value) || 0;
+    const opBulanan = parseFloat(document.getElementById('biayaOperasional').value) || 0;
+    const potongan = parseFloat(document.getElementById('potonganPlatform').value) || 0;
+    const targetLaba = parseFloat(document.getElementById('targetLaba').value) || 0;
+
+    const hari = unit === 'bulan' ? jumlah * 30 : jumlah * 365;
+    const labaPerItem = jual - modal - potongan - varLain;
+    const biayaTetap = opBulanan * (hari / 30);
+
+    if (labaPerItem <= 0) {
+      alert("Harga jual harus lebih tinggi dari total biaya per item!");
+      return;
+    }
+
+    const totalProduk = Math.ceil((targetLaba + biayaTetap) / labaPerItem);
+    const perHari = Math.ceil(totalProduk / hari);
+    const untukBiaya = Math.ceil(biayaTetap / labaPerItem);
+    const untukLaba = totalProduk - untukBiaya;
+
+    const hasil = `
+HASIL TARGET PENJUALAN
+═════════════════════════════
+Periode      : \( {jumlah} \){unit === 'bulan' ? 'Bulan' : 'Tahun'} (${hari} hari)
+Target Laba  : Rp ${targetLaba.toLocaleString()}
+═════════════════════════════
+
+TARGET PENJUALAN
+Total Produk : ${totalProduk} unit
+Rata-rata    : ${perHari} unit/hari
+
+LABA PER ITEM
+Harga Jual   : Rp ${jual.toLocaleString()}
+- Modal      : Rp ${modal.toLocaleString()}
+- Potongan   : Rp ${potongan.toLocaleString()}
+- Variabel   : Rp ${varLain.toLocaleString()}
+────────────────────────────────
+Laba Bersih  : Rp ${labaPerItem.toLocaleString()}
+
+ALOKASI
+Untuk BEP    : ${untukBiaya} unit
+Untuk Laba   : ${untukLaba} unit
+────────────────────────────────
+Total        : ${totalProduk} unit
+    `.trim();
+
+    const el = document.getElementById('hasilKalkulasi');
+    el.textContent = hasil;
+    el.classList.remove('hidden');
+  }
+
+  // ================== DOMPET ==================
+  function updateRingkasanDompet() {
+    const data = loadData();
+    const now = new Date();
+    const bulanIni = now.getMonth();
+    const tahunIni = now.getFullYear();
+
+    let saldo = 0;
+    let masukBulan = 0;
+    let keluarBulan = 0;
+
+    data.transactions.forEach(t => {
+      const date = new Date(t.timestamp);
+      if (t.tipe === 'pemasukan') {
+        saldo += t.jumlah;
+        if (date.getMonth() === bulanIni && date.getFullYear() === tahunIni) masukBulan += t.jumlah;
+      } else {
+        saldo -= t.jumlah;
+        if (date.getMonth() === bulanIni && date.getFullYear() === tahunIni) keluarBulan += t.jumlah;
+      }
+    });
+
+    document.getElementById('ringkasanDompet').innerHTML = `
+      <div class="font-bold text-2xl">Saldo: Rp ${saldo.toLocaleString()}</div>
+      <div>Pemasukan bulan ini: Rp ${masukBulan.toLocaleString()}</div>
+      <div>Pengeluaran bulan ini: Rp ${keluarBulan.toLocaleString()}</div>
+    `;
+  }
+
+  function tambahTransaksi(tipe) {
+    currentTipe = tipe;
+    document.getElementById('formTransaksi').classList.remove('hidden');
+    document.getElementById('jumlahTransaksi').focus();
+  }
+
+  function simpanTransaksi() {
+    const jumlah = parseFloat(document.getElementById('jumlahTransaksi').value);
+    const ket = document.getElementById('ketTransaksi').value.trim() || "Tanpa keterangan";
+
+    if (isNaN(jumlah) || jumlah <= 0) {
+      alert("Masukkan jumlah yang valid!");
+      return;
+    }
+
+    const data = loadData();
+    data.transactions.push({
+      tipe: currentTipe,
+      jumlah: jumlah,
+      keterangan: ket,
+      timestamp: new Date().toISOString()
+    });
+    saveData(data);
+
+    alert(`\( {currentTipe === 'pemasukan' ? 'Pemasukan' : 'Pengeluaran'} Rp \){jumlah.toLocaleString()} berhasil dicatat!`);
+    document.getElementById('formTransaksi').classList.add('hidden');
+    document.getElementById('jumlahTransaksi').value = '';
+    document.getElementById('ketTransaksi').value = '';
+    updateRingkasanDompet();
+  }
+
+  function tampilRiwayat() {
+    const data = loadData();
+    const container = document.getElementById('riwayatContainer');
+    container.classList.remove('hidden');
+    container.innerHTML = "<h3 class='text-xl font-bold mb-4'>Riwayat Transaksi (10 terakhir)</h3>";
+
+    const recent = data.transactions.slice(-10).reverse();
+    if (recent.length === 0) {
+      container.innerHTML += "<p>Belum ada transaksi.</p>";
+      return;
+    }
+
+    let html = "<div class='space-y-2'>";
+    recent.forEach(t => {
+      const date = new Date(t.timestamp);
+      const ico = t.tipe === 'pemasukan' ? '↑' : '↓';
+      const warna = t.tipe === 'pemasukan' ? 'text-green-600' : 'text-red-600';
+      html += `<div class='bg-gray-50 p-3 rounded-lg'>
+        <div class='\( {warna} font-bold'> \){ico} Rp ${t.jumlah.toLocaleString()}</div>
+        <div class='text-sm'>${t.keterangan}</div>
+        <div class='text-xs text-gray-500'>\( {date.toLocaleDateString('id-ID')} \){date.toTimeString().substr(0,5)}</div>
+      </div>`;
+    });
+    html += "</div>";
+    container.innerHTML += html;
+  }
+
+  function hapusSemuaData() {
+    if (confirm("Yakin hapus SEMUA data dompet?")) {
+      localStorage.removeItem(STORAGE_KEY);
+      alert("Data dompet telah dihapus.");
+      updateRingkasanDompet();
+    }
+  }
+
+  // Init
+  showSection('menu');
+</script>
+</body>
+</html>
