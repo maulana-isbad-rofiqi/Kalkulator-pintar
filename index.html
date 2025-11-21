@@ -1,280 +1,458 @@
 <!DOCTYPE html>
-<html lang="id" class="scroll-smooth">
+<html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Kaltain — Kalkulator Target Pintar</title>
-  <meta name="description" content="Aplikasi all-in-one: Target Pintar, Dompet, Kalkulator, Tanggal — versi paling keren 2025"/>
-  
-  <!-- Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  
-  <!-- Tailwind + Icons -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kaltain • Kalkulator Target Pintar</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Space+Grotesk:wght@700&family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@tabler/icons@latest/dist/tabler-icons.min.js"></script>
-  
+  <script src="https://cdn.jsdelivr.net/npm/tsparticles-confetti@2.12.0/tsparticles.confetti.min.js"></script>
   <style>
-    :root { --primary: #a855f7; --secondary: #ec4899; --accent: #22d3ee; }
-    body { background: #000; color: white; font-family: 'Inter', sans-serif; }
-    .glass { background: rgba(255,255,255,0.05); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); }
-    .btn { @apply transition-all duration-300 hover:scale-105 hover:shadow-2xl; }
-    .splash { 
-      position: fixed; inset: 0; background: radial-gradient(circle at center, #0f051d 0%, #000 80%);
-      z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center;
-      transition: opacity 1.5s ease-out;
+    :root {
+      --purple: #a855f7;
+      --pink: #ec4899;
+      --cyan: #22d3ee;
+      --amber: #f59e0b;
     }
-    .title { font-family: 'Orbitron', sans-serif; font-size: clamp(4rem, 12vw, 9rem); font-weight: 900;
-      background: linear-gradient(90deg, #a855f7, #ec4899, #22d3ee, #f59e0b);
-      -webkit-background-clip: text; background-clip: text; color: transparent;
-      text-shadow: 0 0 60px rgba(168,85,247,0.6);
+    body { margin:0; overflow-x:hidden; background:#000; font-family:'Inter',sans-serif; color:white; }
+    #particles{position:fixed;inset:0;z-index:1;pointer-events:none;}
+    
+    /* Splash Screen */
+    .splash{position:fixed;inset:0;background:radial-gradient(circle at center,#0f051d 0%,#000 80%);z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;transition:opacity 1.5s ease-out;}
+    .title-main{font-family:'Orbitron',sans-serif;font-size:clamp(4rem,15vw,10rem);font-weight:900;background:linear-gradient(90deg,#a855f7,#ec4899,#22d3ee,#f59e0b);-webkit-background-clip:text;background-clip:text;color:transparent;letter-spacing:8px;text-shadow:0 0 80px rgba(168,85,247,.9);animation:glow 2.5s ease-in-out infinite alternate;}
+    @keyframes glow{from{text-shadow:0 0 40px rgba(168,85,247,.7)}to{text-shadow:0 0 100px rgba(236,72,153,1)}}
+    
+    .loading-bar{width:50vw;max-width:600px;height:10px;background:rgba(255,255,255,.1);border-radius:50px;overflow:hidden;border:2px solid rgba(168,85,247,.6);margin-top:4rem;}
+    .progress{height:100%;width:0%;background:linear-gradient(90deg,var(--purple),var(--pink));border-radius:50px;animation:load 4s ease-in-out forwards;box-shadow:0 0 40px var(--purple);}
+    @keyframes load{to{width:100%}}
+
+    /* Glassmorphism Card */
+    .glass{
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.37);
     }
-    .loading-bar { width: 40%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 50px; overflow: hidden; margin-top: 3rem; }
-    .progress { height: 100%; width: 0%; background: linear-gradient(90deg, #a855f7, #ec4899); border-radius: 50px;
-      box-shadow: 0 0 30px #a855f7; animation: load 5s ease-in-out forwards; }
-    @keyframes load { to { width: 100%; } }
+    .btn-glow{
+      transition:all .4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      background: linear-gradient(135deg, rgba(255,255,255,0.15), rgba(255,255,255,0.05));
+    }
+    .btn-glow:hover{
+      transform: translateY(-12px) scale(1.05);
+      box-shadow: 0 30px 60px rgba(0,0,0,0.7), 0 0 40px var(--purple);
+    }
+    .calc-btn{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);transition:all .2s;}
+    .calc-btn:active{transform:scale(0.95); background:rgba(255,255,255,.3);}
+
+    /* Scrollbar */
+    ::-webkit-scrollbar{width:8px;}
+    ::-webkit-scrollbar-track{background:#111;}
+    ::-webkit-scrollbar-thumb{background:var(--purple);border-radius:4px;}
   </style>
 </head>
-<body class="min-h-screen">
+<body class="text-white">
 
-  <!-- SPLASH SCREEN -->
-  <div id="splash" class="splash">
-    <h1 class="title">KALTAIN</h1>
-    <p class="text-2xl md:text-4xl font-light opacity-90 tracking-widest">Kalkulator Target Pintar</p>
-    <div class="loading-bar"><div class="progress"></div></div>
-    <p class="mt-12 text-xl md:text-2xl font-light opacity-80">By <span class="font-bold text-yellow-400">Itsbad</span> Development</p>
-  </div>
+<div id="particles"></div>
 
-  <!-- LOGIN / REGISTER -->
-  <div id="auth" class="fixed inset-0 z-50 flex items-center justify-center hidden">
-    <div class="glass p-10 md:p-16 rounded-3xl shadow-2xl max-w-md w-full mx-6 text-center">
-      <h2 class="text-5xl md:text-6xl font-black mb-10 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-        Kaltain
-      </h2>
+<!-- SPLASH SCREEN -->
+<div id="splash" class="splash">
+  <h1 class="title-main">KALTAIN</h1>
+  <p class="text-3xl md:text-5xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">Kalkulator Target Pintar</p>
+  <div class="loading-bar"><div class="progress"></div></div>
+  <p class="mt-10 text-xl opacity-80 font-medium">By <span class="text-yellow-400 font-bold">Itsbad</span> • Loading magic...</p>
+</div>
 
-      <!-- Login Form -->
-      <div id="loginForm">
-        <input type="text" id="loginUser" placeholder="Username" class="w-full p-4 mb-4 rounded-xl glass text-lg focus:ring-4 focus:ring-purple-500 focus:outline-none">
-        <input type="password" id="loginPass" placeholder="Password" class="w-full p-4 mb-8 rounded-xl glass text-lg focus:ring-4 focus:ring-purple-500 focus:outline-none">
-        <button onclick="login()" class="w-full bg-gradient-to-r from-purple-600 to-pink-600 py-5 rounded-xl font-bold text-xl btn">MASUK</button>
-        <p class="mt-6 text-sm opacity-80">
-          Belum punya akun? <span onclick="toggleForm('register')" class="text-cyan-400 font-bold cursor-pointer">Daftar</span>
-        </p>
-        <p class="mt-6 text-yellow-400 font-bold cursor-pointer" onclick="guestLogin()">Masuk sebagai Guest (untuk tes)</p>
-      </div>
+<!-- AUTH MODAL -->
+<div id="auth" class="fixed inset-0 z-50 flex items-center justify-center hidden bg-black/80 backdrop-blur-sm">
+  <div class="glass p-10 md:p-16 rounded-3xl shadow-2xl max-w-md w-full mx-6 border border-purple-500/40">
+    <h2 class="text-5xl md:text-6xl font-black text-center mb-12 bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent">Kaltain</h2>
+    
+    <!-- Login -->
+    <div id="loginForm" class="space-y-6">
+      <input type="text" id="loginUser" placeholder="Username" class="w-full p-5 rounded-2xl glass text-lg focus:ring-4 focus:ring-purple-500 focus:outline-none transition">
+      <input type="password" id="loginPass" placeholder="Password" class="w-full p-5 rounded-2xl glass text-lg focus:ring-4 focus:ring-purple-500 focus:outline-none transition">
+      <button onclick="login()" class="w-full py-5 rounded-2xl font-bold text-xl btn-glow bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500">MASUK</button>
+      <p class="text-center text-sm opacity-80">Belum punya akun? <span onclick="showRegister()" class="text-cyan-400 cursor-pointer font-bold hover:text-cyan-300">Daftar Gratis</span></p>
+    </div>
 
-      <!-- Register Form -->
-      <div id="registerForm" class="hidden">
-        <input type="text" id="regUser" placeholder="Buat Username" class="w-full p-4 mb-4 rounded-xl glass text-lg">
-        <input type="password" id="regPass" placeholder="Buat Password" class="w-full p-4 mb-8 rounded-xl glass text-lg">
-        <button onclick="register()" class="w-full bg-gradient-to-r from-cyan-500 to-purple-600 py-5 rounded-xl font-bold text-xl btn">DAFTAR</button>
-        <p class="mt-6 text-sm opacity-80">
-          Sudah punya akun? <span onclick="toggleForm('login')" class="text-pink-400 font-bold cursor-pointer">Masuk</span>
-        </p>
-      </div>
+    <!-- Register -->
+    <div id="registerForm" class="hidden space-y-6">
+      <input type="text" id="regUser" placeholder="Buat Username" class="w-full p-5 rounded-2xl glass text-lg focus:ring-4 focus:ring-purple-500 focus:outline-none">
+      <input type="password" id="regPass" placeholder="Buat Password" class="w-full p-5 rounded-2xl glass text-lg focus:ring-4 focus:ring-purple-500 focus:outline-none">
+      <button onclick="register()" class="w-full py-5 rounded-2xl font-bold text-xl btn-glow bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500">DAFTAR</button>
+      <p class="text-center text-sm opacity-80"><span onclick="showLogin()" class="text-pink-400 cursor-pointer font-bold hover:text-pink-300">Sudah punya akun? Masuk</span></p>
     </div>
   </div>
+</div>
 
-  <!-- MAIN APP -->
-  <div id="app" class="hidden min-h-screen p-6 md:p-10">
-    <div class="max-w-7xl mx-auto">
-      <header class="flex justify-between items-center mb-12">
-        <div>
-          <h1 class="text-6xl md:text-8xl font-black bg-gradient-to-r from-purple-400 via-pink-500 to-cyan-400 bg-clip-text text-transparent">
-            Kaltain
-          </h1>
-          <p class="text-2xl mt-2 opacity-90">Halo, <span id="userDisplay" class="text-yellow-400 font-bold">User</span>!</p>
+<!-- MAIN APP -->
+<div id="app" class="relative z-10 hidden min-h-screen p-6 md:p-10">
+  <div class="max-w-7xl mx-auto">
+    <div class="flex flex-col md:flex-row justify-between items-center mb-12">
+      <div>
+        <h1 class="text-6xl md:text-9xl font-black bg-gradient-to-r from-purple-400 via-pink-500 to-cyan-400 bg-clip-text text-transparent leading-none">Kaltain</h1>
+        <p class="text-2xl md:text-4xl mt-2">Halo, <span id="userDisplay" class="text-yellow-400 font-black"></span>! 👋</p>
+      </div>
+      <button onclick="logout()" class="mt-6 md:mt-0 glass px-8 py-4 rounded-full text-xl font-bold btn-glow">Logout</button>
+    </div>
+
+    <!-- MENU UTAMA -->
+    <div id="menu" class="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-12 mb-16">
+      <button onclick="show('target')" class="glass p-8 md:p-16 rounded-3xl text-center btn-glow hover:bg-purple-600/40 transform hover:scale-105 transition">
+        <div class="text-6xl md:text-9xl mb-4">🎯</div>
+        <div class="text-2xl md:text-4xl font-black text-purple-300">Target</div>
+      </button>
+      <button onclick="show('dompet')" class="glass p-8 md:p-16 rounded-3xl text-center btn-glow hover:bg-green-600/40 transform hover:scale-105 transition">
+        <div class="text-6xl md:text-9xl mb-4">💰</div>
+        <div class="text-2xl md:text-4xl font-black text-green-300">Dompet</div>
+      </button>
+      <button onclick="show('calc')" class="glass p-8 md:p-16 rounded-3xl text-center btn-glow hover:bg-blue-600/40 transform hover:scale-105 transition">
+        <div class="text-6xl md:text-9xl mb-4">🧮</div>
+        <div class="text-2xl md:text-4xl font-black text-blue-300">Kalkulator</div>
+      </button>
+      <button onclick="show('datecalc')" class="glass p-8 md:p-16 rounded-3xl text-center btn-glow hover:bg-orange-600/40 transform hover:scale-105 transition">
+        <div class="text-6xl md:text-9xl mb-4">📅</div>
+        <div class="text-2xl md:text-4xl font-black text-orange-300">Tanggal</div>
+      </button>
+      <button onclick="show('sultan')" class="col-span-2 glass p-12 md:p-24 rounded-3xl text-center btn-glow bg-gradient-to-r from-yellow-600/30 to-orange-600/30 transform hover:scale-105 transition">
+        <div class="text-8xl md:text-12xl mb-6">👑</div>
+        <div class="text-3xl md:text-6xl font-black text-yellow-400">SULTAN AREA</div>
+      </button>
+    </div>
+
+    <!-- TARGET PINTAR -->
+    <div id="target" class="hidden">
+      <h2 class="text-4xl md:text-6xl font-black text-center mb-12 bg-gradient-to-r from-emerald-400 to-teal-500 bg-clip-text text-transparent">Target Pintar</h2>
+      <div class="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto">
+        <input type="number" placeholder="Jumlah periode" id="jmlPeriode" class="p-5 rounded-2xl glass text-xl">
+        <select id="unit" class="p-5 rounded-2xl glass text-xl"><option>Bulan</option><option>Tahun</option></select>
+        <input type="number" placeholder="Harga beli" id="hBeli" class="p-5 rounded-2xl glass text-xl">
+        <input type="number" placeholder="Harga jual" id="hJual" class="p-5 rounded-2xl glass text-xl">
+        <input type="number" placeholder="Biaya variabel" id="bVariabel" class="p-5 rounded-2xl glass text-xl">
+        <input type="number" placeholder="Biaya operasional bulanan" id="bOperasional" class="p-5 rounded-2xl glass text-xl">
+        <input type="number" placeholder="Potongan platform" id="potongan" class="p-5 rounded-2xl glass text-xl">
+        <input type="number" placeholder="Target laba bersih" id="tLaba" class="p-5 rounded-2xl glass text-xl">
+      </div>
+      <button onclick="hitungTarget()" class="mt-10 w-full max-w-2xl mx-auto block py-6 rounded-2xl font-black text-2xl btn-glow bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500">HITUNG TARGET SEKARANG</button>
+      <pre id="hasilTarget" class="hidden mt-10 p-8 bg-black/60 rounded-3xl text-green-400 font-mono text-lg md:text-xl max-w-5xl mx-auto border border-green-500/30"></pre>
+    </div>
+
+    <!-- DOMPET -->
+    <div id="dompet" class="hidden text-center">
+      <h2 class="text-4xl md:text-6xl font-black mb-12 bg-gradient-to-r from-green-400 to-emerald-500 bg-clip-text text-transparent">Dompet Saya</h2>
+      <div id="ringkasanDompet" class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-12 mb-12 max-w-5xl mx-auto"></div>
+      <div class="flex justify-center gap-10 md:gap-20 mb-12">
+        <button onclick="tambah('pemasukan')" class="bg-gradient-to-br from-green-500 to-emerald-600 w-24 h-24 md:w-56 md:h-56 rounded-full text-5xl md:text-9xl font-black shadow-2xl btn-glow">+</button>
+        <button onclick="tambah('pengeluaran')" class="bg-gradient-to-br from-red-500 to-rose-600 w-24 h-24 md:w-56 md:h-56 rounded-full text-5xl md:text-9xl font-black shadow-2xl btn-glow">-</button>
+      </div>
+      <button onclick="tampilRiwayat()" class="w-full max-w-md mx-auto py-5 bg-white/10 rounded-2xl font-bold text-xl btn-glow">Riwayat Transaksi</button>
+      <div id="formTransaksi" class="hidden space-y-6 max-w-md mx-auto mt-8">
+        <input type="number" id="jumlahTransaksi" placeholder="Jumlah (Rp)" class="w-full p-5 rounded-2xl glass text-xl">
+        <input type="text" id="ketTransaksi" placeholder="Keterangan" class="w-full p-5 rounded-2xl glass text-xl">
+        <button onclick="simpan()" class="w-full py-5 rounded-2xl font-bold text-xl btn-glow bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500">SIMPAN</button>
+      </div>
+      <div id="riwayatContainer" class="hidden mt-10 space-y-6 max-w-4xl mx-auto"></div>
+    </div>
+
+    <!-- KALKULATOR STANDAR -->
+    <div id="calc" class="hidden mt-12 max-w-md mx-auto">
+      <h2 class="text-4xl md:text-6xl font-black text-center mb-12 bg-gradient-to-r from-blue-400 to-indigo-500 bg-clip-text text-transparent">Kalkulator Standar</h2>
+      <div class="glass p-8 rounded-3xl">
+        <input type="text" id="calcDisplay" class="w-full text-5xl text-right p-6 bg-black/40 rounded-2xl mb-6 font-mono" readonly value="0">
+        <div class="grid grid-cols-4 gap-4">
+          <button onclick="clearCalc()" class="calc-btn py-6 text-3xl font-bold text-red-400 rounded-xl">C</button>
+          <button onclick="delCalc()" class="calc-btn py-6 text-3xl rounded-xl">⌫</button>
+          <button onclick="inputCalc('/')" class="calc-btn py-6 text-3xl text-yellow-400 rounded-xl">÷</button>
+          <button onclick="inputCalc('*')" class="calc-btn py-6 text-3xl text-yellow-400 rounded-xl">×</button>
+          <button onclick="inputCalc('7')" class="calc-btn py-6 text-3xl rounded-xl">7</button>
+          <button onclick="inputCalc('8')" class="calc-btn py-6 text-3xl rounded-xl">8</button>
+          <button onclick="inputCalc('9')" class="calc-btn py-6 text-3xl rounded-xl">9</button>
+          <button onclick="inputCalc('-')" class="calc-btn py-6 text-3xl text-yellow-400 rounded-xl">−</button>
+          <button onclick="inputCalc('4')" class="calc-btn py-6 text-3xl rounded-xl">4</button>
+          <button onclick="inputCalc('5')" class="calc-btn py-6 text-3xl rounded-xl">5</button>
+          <button onclick="inputCalc('6')" class="calc-btn py-6 text-3xl rounded-xl">6</button>
+          <button onclick="inputCalc('+')" class="calc-btn py-6 text-3xl text-yellow-400 rounded-xl">+</button>
+          <button onclick="inputCalc('1')" class="calc-btn py-6 text-3xl rounded-xl">1</button>
+          <button onclick="inputCalc('2')" class="calc-btn py-6 text-3xl rounded-xl">2</button>
+          <button onclick="inputCalc('3')" class="calc-btn py-6 text-3xl rounded-xl">3</button>
+          <button onclick="calcResult()" class="calc-btn py-6 text-3xl font-black text-green-400 col-span-2 row-span-2 rounded-xl">=</button>
+          <button onclick="inputCalc('0')" class="calc-btn py-6 text-3xl col-span-2 rounded-xl">0</button>
+          <button onclick="inputCalc('.')" class="calc-btn py-6 text-3xl rounded-xl">.</button>
         </div>
-        <button onclick="logout()" class="glass px-8 py-4 rounded-full font-bold btn">Logout</button>
-      </header>
-
-      <!-- MENU -->
-      <div id="menu" class="grid grid-cols-2 md:grid-cols-4 gap-8">
-        <button onclick="showSection('target')" class="glass p-12 rounded-3xl text-center btn hover:bg-purple-600/20">
-          <div class="text-8xl mb-4">Target</div>
-          <div class="text-2xl font-bold">Target Pintar</div>
-        </button>
-        <button onclick="showSection('dompet')" class="glass p-12 rounded-3xl text-center btn hover:bg-green-600/20">
-          <div class="text-8xl mb-4">Wallet</div>
-          <div class="text-2xl font-bold">Dompet</div>
-        </button>
-        <button onclick="showSection('calc')" class="glass p-12 rounded-3xl text-center btn hover:bg-blue-600/20">
-          <div class="text-8xl mb-4">Calc</div>
-          <div class="text-2xl font-bold">Kalkulator</div>
-        </button>
-        <button onclick="showSection('datecalc')" class="glass p-12 rounded-3xl text-center btn hover:bg-orange-600/20">
-          <div class="text-8xl mb-4">Calendar</div>
-          <div class="text-2xl font-bold">Tanggal</div>
-        </button>
-        <button onclick="showSection('sultan')" class="col-span-2 md:col-span-4 glass p-20 rounded-3xl text-center bg-gradient-to-r from-yellow-600/30 to-orange-600/30 btn">
-          <div class="text-10xl mb-4">Crown</div>
-          <div class="text-5xl font-black">SULTAN AREA</div>
-        </button>
       </div>
+    </div>
 
-      <!-- Semua section (Target, Dompet, Kalkulator, Tanggal, Sultan) -->
-      <!-- Aku taruh lengkap di bagian script bawah biar rapi -->
+    <!-- KALKULATOR TANGGAL -->
+    <div id="datecalc" class="hidden mt-12">
+      <h2 class="text-4xl md:text-6xl font-black text-center mb-12 bg-gradient-to-r from-orange-400 to-amber-500 bg-clip-text text-transparent">Kalkulator Tanggal</h2>
+      <div class="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+        <div class="glass p-8 rounded-3xl">
+          <h3 class="text-3xl font-bold mb-6">Selisih Hari</h3>
+          <input type="date" id="date1" class="w-full p-5 rounded-2xl glass mb-6 text-xl">
+          <input type="date" id="date2" class="w-full p-5 rounded-2xl glass mb-6 text-xl">
+          <button onclick="hitungSelisih()" class="w-full py-5 rounded-2xl font-bold text-xl btn-glow bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-400 hover:to-purple-500">Hitung</button>
+          <p id="hasilSelisih" class="mt-6 text-4xl font-black text-center text-cyan-400"></p>
+        </div>
+        <div class="glass p-8 rounded-3xl">
+          <h3 class="text-3xl font-bold mb-6">Tambah/Kurang Hari</h3>
+          <input type="date" id="baseDate" class="w-full p-5 rounded-2xl glass mb-6 text-xl">
+          <input type="number" id="hariTambah" placeholder="± Hari" class="w-full p-5 rounded-2xl glass mb-6 text-xl">
+          <button onclick="tambahHari()" class="w-full py-5 rounded-2xl font-bold text-xl btn-glow bg-gradient-to-r from-green-500 to-teal-600 hover:from-green-400 hover:to-teal-500">Hitung</button>
+          <p id="hasilTanggal" class="mt-6 text-4xl font-black text-center text-emerald-400"></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SULTAN AREA -->
+    <div id="sultan" class="hidden text-center py-24">
+      <h2 class="text-6xl md:text-9xl font-black mb-12 bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">SULTAN AREA</h2>
+      <p class="text-3xl mb-16 opacity-90">Terima kasih dukungannya! Support developer yuk 👇</p>
+      <img src="https://i.postimg.cc/VNnw27W2/qris.png" alt="QRIS" class="mx-auto rounded-3xl shadow-2xl border-8 border-white/50 w-64 md:w-96">
+      <p class="mt-16 text-4xl md:text-6xl font-bold">Builder: Itsbad</p>
+    </div>
+
+    <div class="text-center mt-20">
+      <button onclick="show('menu')" class="text-yellow-400 text-2xl underline hover:text-yellow-300 transition">← Kembali ke Menu</button>
     </div>
   </div>
+</div>
 
 <script>
-// === GLOBAL VAR ===
-let currentUser = localStorage.getItem('kaltain_user') || null;
+// PARTICLES & SPLASH
+tsParticles.load("particles", {
+  preset: "fireworks",
+  particles: { color: { value: ["#a855f7","#ec4899","#22d3ee","#f59e0b"] }, opacity: { value: 0.8 } }
+});
 
-// === SPLASH SCREEN ===
 setTimeout(() => {
-  document.querySelector('.progress').style.animation = 'load 5s ease-in-out forwards';
+  document.querySelector('.progress').style.animation = 'load 4s ease-in-out forwards';
   setTimeout(() => {
     document.getElementById('splash').style.opacity = '0';
     setTimeout(() => {
       document.getElementById('splash').classList.add('hidden');
-      document.getElementById('auth').classList.remove('hidden');
+      if (!localStorage.getItem('kaltain_user')) {
+        document.getElementById('auth').classList.remove('hidden');
+      } else {
+        autoLogin();
+      }
+      confetti({particleCount: 400, spread: 120, origin: { y: 0.6 }});
     }, 1500);
-  }, 5000);
+  }, 4000);
 }, 800);
 
-// === AUTH ===
-function toggleForm(mode) {
-  document.getElementById('loginForm').classList.toggle('hidden', mode === 'register');
-  document.getElementById('registerForm').classList.toggle('hidden', mode === 'login');
+// AUTH SYSTEM
+let currentUser = localStorage.getItem('kaltain_user');
+
+function showLogin() { 
+  document.getElementById('loginForm').classList.remove('hidden'); 
+  document.getElementById('registerForm').classList.add('hidden'); 
+}
+function showRegister() { 
+  document.getElementById('registerForm').classList.remove('hidden'); 
+  document.getElementById('loginForm').classList.add('hidden'); 
 }
 
 function register() {
   const u = document.getElementById('regUser').value.trim();
   const p = document.getElementById('regPass').value;
-  if (!u || !p) return alert('Isi semua field!');
-  if (localStorage.getItem('user_'+u)) return alert('Username sudah ada!');
-  localStorage.setItem('user_'+u, p);
-  localStorage.setItem('data_'+u, JSON.stringify({transactions:[]}));
-  alert('Akun berhasil dibuat! Silakan login');
-  toggleForm('login');
+  if (!u || !p) return alert("Isi semua field!");
+  if (localStorage.getItem('user_' + u)) return alert("Username sudah dipakai!");
+  localStorage.setItem('user_' + u, p);
+  localStorage.setItem('data_' + u, JSON.stringify({transactions: []}));
+  alert("Akun berhasil dibuat! Silakan login.");
+  showLogin();
+  document.getElementById('regUser').value = document.getElementById('regPass').value = '';
 }
 
 function login() {
   const u = document.getElementById('loginUser').value.trim();
   const p = document.getElementById('loginPass').value;
-  const saved = localStorage.getItem('user_'+u);
-  if (!saved) return alert('Username tidak ditemukan!');
-  if (saved !== p) return alert('Password salah!');
-  currentUser = u;
+  const saved = localStorage.getItem('user_' + u);
+  if (!saved) return alert("Username tidak ditemukan!");
+  if (saved !== p) return alert("Password salah!");
   localStorage.setItem('kaltain_user', u);
-  enterApp(u);
+  currentUser = u;
+  enterApp();
+  document.getElementById('loginUser').value = document.getElementById('loginPass').value = '';
 }
 
-function guestLogin() {
-  currentUser = 'guest';
-  enterApp('Guest');
+function autoLogin() {
+  if (currentUser) {
+    enterApp();
+  }
 }
 
-function enterApp(name) {
-  document.getElementById('userDisplay').textContent = name;
+function enterApp() {
+  document.getElementById('userDisplay').textContent = currentUser;
   document.getElementById('auth').classList.add('hidden');
   document.getElementById('app').classList.remove('hidden');
-  showSection('menu');
-  if (name !== 'Guest') updateDompet();
+  confetti({particleCount: 200, spread: 90});
+  updateRingkasan();
 }
 
 function logout() {
-  if (confirm('Yakin logout?')) {
+  if (confirm("Yakin ingin keluar?")) {
     localStorage.removeItem('kaltain_user');
     location.reload();
   }
 }
 
-// Auto login
-if (currentUser) {
-  document.getElementById('userDisplay').textContent = currentUser;
-  document.getElementById('auth').classList.add('hidden');
-  document.getElementById('app').classList.remove('hidden');
-  showSection('menu');
-  if (currentUser !== 'guest') updateDompet();
+// NAVIGASI
+function show(id) {
+  ['menu','target','dompet','calc','datecalc','sultan'].forEach(x => document.getElementById(x).classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+  if (id === 'dompet') updateRingkasan();
 }
 
-// === NAVIGASI ===
-function showSection(id) {
-  document.querySelectorAll('#app > div > section').forEach(s => s.classList.add('hidden'));
-  const el = document.getElementById(id);
-  if (el) el.classList.remove('hidden');
-  if (id === 'dompet') updateDompet();
+// DATA USER
+function getData() { return JSON.parse(localStorage.getItem('data_' + currentUser) || '{"transactions":[]}'); }
+function saveData(d) { localStorage.setItem('data_' + currentUser, JSON.stringify(d)); }
+
+// KALKULATOR TARGET PINTAR
+function hitungTarget() {
+  const unit = document.getElementById('unit').value;
+  const jumlah = parseFloat(document.getElementById('jmlPeriode').value) || 0;
+  const modal = parseFloat(document.getElementById('hBeli').value) || 0;
+  const jual = parseFloat(document.getElementById('hJual').value) || 0;
+  const variabel = parseFloat(document.getElementById('bVariabel').value) || 0;
+  const operasional = parseFloat(document.getElementById('bOperasional').value) || 0;
+  const potongan = parseFloat(document.getElementById('potongan').value) || 0;
+  const targetLaba = parseFloat(document.getElementById('tLaba').value) || 0;
+
+  const hari = unit === 'Bulan' ? jumlah * 30 : jumlah * 365;
+  const labaPerItem = jual - modal - variabel - potongan;
+  const biayaTetap = operasional * (hari / 30);
+
+  if (labaPerItem <= 0) return alert("Harga jual harus lebih tinggi dari total biaya!");
+
+  const totalProduk = Math.ceil((targetLaba + biayaTetap) / labaPerItem);
+  const harian = Math.ceil(totalProduk / hari);
+  const untukBEP = Math.ceil(biayaTetap / labaPerItem);
+  const untukLaba = totalProduk - untukBEP;
+
+  const hasil = `HASIL TARGET
+════════════════════════
+Periode       : \( {jumlah} \){unit} (${hari} hari)
+Target Laba   : Rp ${targetLaba.toLocaleString('id-ID')}
+
+TARGET PENJUALAN
+Total Produk  : ${totalProduk.toLocaleString()} unit
+Rata-rata     : ${harian.toLocaleString()} unit/hari
+
+LABA PER ITEM
+Harga Jual    : Rp ${jual.toLocaleString()}
+− Modal       : Rp ${modal.toLocaleString()}
+− Variabel    : Rp ${variabel.toLocaleString()}
+− Potongan    : Rp ${potongan.toLocaleString()}
+────────────────────────────────
+Laba Bersih   : Rp ${labaPerItem.toLocaleString()}
+
+ALOKASI
+BEP (biaya)   : ${untukBEP.toLocaleString()} unit
+Laba Bersih   : ${untukLaba.toLocaleString()} unit
+────────────────────────────────
+Total         : ${totalProduk.toLocaleString()} unit`;
+
+  document.getElementById('hasilTarget').textContent = hasil;
+  document.getElementById('hasilTarget').classList.remove('hidden');
 }
 
-// === SEMUA SECTION (Target, Dompet, Kalkulator, Tanggal, Sultan) ===
-const sectionsHTML = `
-<section id="target" class="hidden mt-16 max-w-5xl mx-auto">
-  <h2 class="text-5xl font-black text-center mb-10">Kalkulator Target Pintar</h2>
-  <div class="grid md:grid-cols-2 gap-6">
-    <input type="number" id="jmlPeriode" placeholder="Jumlah periode (bulan/tahun)" class="p-5 rounded-2xl glass text-lg">
-    <select id="unit" class="p-5 rounded-2xl glass text-lg"><option>Bulan</option><option>Tahun</option></select>
-    <input type="number" id="hBeli" placeholder="Harga beli" class="p-5 rounded-2xl glass text-lg">
-    <input type="number" id="hJual" placeholder="Harga jual" class="p-5 rounded-2xl glass text-lg">
-    <input type="number" id="bVariabel" placeholder="Biaya variabel" class="p-5 rounded-2xl glass text-lg">
-    <input type="number" id="bOperasional" placeholder="Biaya operasional bulanan" class="p-5 rounded-2xl glass text-lg">
-    <input type="number" id="potongan" placeholder="Potongan platform (%)" class="p-5 rounded-2xl glass text-lg">
-    <input type="number" id="tLaba" placeholder="Target laba bersih" class="p-5 rounded-2xl glass text-lg">
-  </div>
-  <button onclick="hitungTarget()" class="mt-10 w-full py-6 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-2xl font-black text-2xl btn">HITUNG TARGET</button>
-  <pre id="hasilTarget" class="hidden mt-10 p-8 bg-black/50 rounded-3xl text-green-400 font-mono text-lg"></pre>
-</section>
+// DOMPET
+let tipeTransaksi = '';
+function updateRingkasan() {
+  const data = getData();
+  const now = new Date();
+  let saldo = 0, masukBulan = 0, keluarBulan = 0;
+  data.transactions.forEach(t => {
+    const d = new Date(t.timestamp);
+    if (t.tipe === 'pemasukan') { saldo += t.jumlah; if (d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()) masukBulan += t.jumlah; }
+    else { saldo -= t.jumlah; if (d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()) keluarBulan += t.jumlah; }
+  });
+  document.getElementById('ringkasanDompet').innerHTML = `
+    <div class="glass p-6 rounded-2xl"><div class="text-4xl font-black">Rp ${saldo.toLocaleString('id-ID')}</div><div class="text-base opacity-80">Saldo</div></div>
+    <div class="glass p-6 rounded-2xl"><div class="text-3xl font-bold text-green-400">+ Rp ${masukBulan.toLocaleString('id-ID')}</div><div class="text-base opacity-80">Pemasukan Bulan Ini</div></div>
+    <div class="glass p-6 rounded-2xl"><div class="text-3xl font-bold text-red-400">- Rp ${keluarBulan.toLocaleString('id-ID')}</div><div class="text-base opacity-80">Pengeluaran Bulan Ini</div></div>
+  `;
+}
 
-<section id="dompet" class="hidden mt-16 text-center">
-  <h2 class="text-5xl font-black mb-10">Dompet Saya</h2>
-  <div id="ringkasan" class="grid grid-cols-3 gap-8 mb-12 text-center"></div>
-  <div class="flex justify-center gap-12">
-    <button onclick="tambahTransaksi('pemasukan')" class="w-40 h-40 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full text-10xl font-black btn">+</button>
-    <button onclick="tambahTransaksi('pengeluaran')" class="w-40 h-40 bg-gradient-to-br from-red-500 to-rose-600 rounded-full text-10xl font-black btn">-</button>
-  </div>
-</section>
+function tambah(tipe) {
+  tipeTransaksi = tipe;
+  document.getElementById('formTransaksi').classList.remove('hidden');
+  document.getElementById('jumlahTransaksi').focus();
+}
 
-<section id="calc" class="hidden mt-16 max-w-lg mx-auto">
-  <h2 class="text-5xl font-black text-center mb-10">Kalkulator Standar</h2>
-  <div class="glass p-8 rounded-3xl">
-    <input type="text" id="display" class="w-full text-5xl text-right p-6 bg-black/40 rounded-2xl mb-6 font-mono" readonly value="0">
-    <div class="grid grid-cols-4 gap-4 text-3xl">
-      <button onclick="calc('C')" class="col-span-2 py-6 bg-red-600/50 rounded-2xl">C</button>
-      <button onclick="calc('⌫')" class="py-6 bg-gray-600/50 rounded-2xl">Back</button>
-      <button onclick="calc('/')" class="py-6 bg-orange-600/50 rounded-2xl">÷</button>
-      <button onclick="calc('7')" class="py-6 bg-white/10 rounded-2xl">7</button>
-      <button onclick="calc('8')" class="py-6 bg-white/10 rounded-2xl">8</button>
-      <button onclick="calc('9')" class="py-6 bg-white/10 rounded-2xl">9</button>
-      <button onclick="calc('*')" class="py-6 bg-orange-600/50 rounded-2xl">×</button>
-      <!-- dst (sama seperti versi sebelumnya) -->
-    </div>
-  </div>
-</section>
+function simpan() {
+  const jumlah = parseFloat(document.getElementById('jumlahTransaksi').value);
+  const ket = document.getElementById('ketTransaksi').value.trim() || "Tanpa keterangan";
+  if (!jumlah || jumlah <= 0) return alert("Masukkan jumlah yang valid!");
+  const data = getData();
+  data.transactions.push({ tipe: tipeTransaksi, jumlah, keterangan: ket, timestamp: new Date().toISOString() });
+  saveData(data);
+  alert(`\( {tipeTransaksi === 'pemasukan' ? 'Pemasukan' : 'Pengeluaran'} Rp \){jumlah.toLocaleString()} berhasil dicatat!`);
+  document.getElementById('formTransaksi').classList.add('hidden');
+  document.getElementById('jumlahTransaksi').value = '';
+  document.getElementById('ketTransaksi').value = '';
+  updateRingkasan();
+}
 
-<section id="datecalc" class="hidden mt-16 max-w-4xl mx-auto">
-  <h2 class="text-5xl font-black text-center mb-10">Kalkulator Tanggal</h2>
-  <div class="grid md:grid-cols-2 gap-10">
-    <div class="glass p-10 rounded-3xl">
-      <h3 class="text-3xl font-bold mb-6">Selisih Hari</h3>
-      <input type="date" id="d1" class="w-full p-4 rounded-xl glass mb-4"><input type="date" id="d2" class="w-full p-4 rounded-xl glass mb-6">
-      <button onclick="selisihHari()" class="w-full py-5 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl font-bold text-xl">Hitung</button>
-      <p id="hasilSelisih" class="mt-6 text-4xl font-black text-cyan-400 text-center"></p>
-    </div>
-    <div class="glass p-10 rounded-3xl">
-      <h3 class="text-3xl font-bold mb-6">Tambah/Kurang Hari</h3>
-      <input type="date" id="base" class="w-full p-4 rounded-xl glass mb-4">
-      <input type="number" id="days" placeholder="± Hari" class="w-full p-4 rounded-xl glass mb-6">
-      <button onclick="tambahHari()" class="w-full py-5 bg-gradient-to-r from-green-500 to-teal-600 rounded-xl font-bold text-xl">Hitung</button>
-      <p id="hasilTambah" class="mt-6 text-4xl font-black text-emerald-400 text-center"></p>
-    </div>
-  </div>
-</section>
+function tampilRiwayat() {
+  const data = getData().transactions.slice(-10).reverse();
+  const cont = document.getElementById('riwayatContainer');
+  cont.classList.remove('hidden');
+  cont.innerHTML = "<h3 class='text-3xl font-bold mb-6 text-center'>Riwayat Terakhir</h3><div class='space-y-6'>";
+  if (data.length === 0) {
+    cont.innerHTML += "<p class='text-center opacity-80'>Belum ada transaksi.</p>";
+  } else {
+    data.forEach(t => {
+      const d = new Date(t.timestamp);
+      const ico = t.tipe === 'pemasukan' ? '+' : '-';
+      const warna = t.tipe === 'pemasukan' ? 'text-green-400' : 'text-red-400';
+      cont.innerHTML += `
+        <div class='glass p-6 rounded-2xl'>
+          <div class='flex justify-between items-center'>
+            <div class='\( {warna} text-3xl font-black'> \){ico} Rp ${t.jumlah.toLocaleString()}</div>
+            <div class='text-base opacity-70'>\( {d.toLocaleDateString('id-ID')} \){d.toTimeString().substr(0,5)}</div>
+          </div>
+          <div class='mt-4 text-xl'>${t.keterangan}</div>
+        </div>`;
+    });
+  }
+  cont.innerHTML += "</div>";
+}
 
-<section id="sultan" class="hidden text-center py-32">
-  <h2 class="text-9xl font-black bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent mb-10">SULTAN AREA</h2>
-  <p class="text-4xl mb-16">Terima kasih sudah mendukung!</p>
-  <img src="https://i.postimg.cc/VNnw27W2/qris.png" class="mx-auto w-80 rounded-3xl shadow-2xl border-8 border-white/30">
-  <p class="mt-16 text-5xl font-bold">Builder: Itsbad</p>
-</section>
-`;
+// KALKULATOR STANDAR
+let calcInput = '';
+function inputCalc(val) { calcInput += val; document.getElementById('calcDisplay').value = calcInput || '0'; }
+function clearCalc() { calcInput = ''; document.getElementById('calcDisplay').value = '0'; }
+function delCalc() { calcInput = calcInput.slice(0, -1); document.getElementById('calcDisplay').value = calcInput || '0'; }
+function calcResult() {
+  try {
+    calcInput = eval(calcInput.replace('×','*').replace('÷','/').replace('−','-')).toFixed(2).replace(/\.?0+$/, '');
+    document.getElementById('calcDisplay').value = calcInput;
+  } catch { document.getElementById('calcDisplay').value = 'Error'; calcInput = ''; }
+}
 
-document.getElementById('app').innerHTML += sectionsHTML;
+// KALKULATOR TANGGAL
+function hitungSelisih() {
+  const d1 = new Date(document.getElementById('date1').value);
+  const d2 = new Date(document.getElementById('date2').value);
+  if (isNaN(d1) || isNaN(d2)) return alert("Pilih tanggal yang valid!");
+  const diff = Math.abs(d2 - d1) / (1000 * 60 * 60 * 24);
+  document.getElementById('hasilSelisih').textContent = `${Math.floor(diff)} hari`;
+}
 
-// Semua fungsi (hitungTarget, dompet, kalkulator, dll) tetap sama seperti versi sebelumnya yang sudah jalan.
-// Karena terlalu panjang, kamu sudah punya — tinggal pakai yang lama.
+function tambahHari() {
+  const base = new Date(document.getElementById('baseDate').value);
+  const hari = parseInt(document.getElementById('hariTambah').value) || 0;
+  if (isNaN(base)) return alert("Pilih tanggal dasar yang valid!");
+  base.setDate(base.getDate() + hari);
+  document.getElementById('hasilTanggal').textContent = base.toLocaleDateString('id-ID');
+}
 
-// Langsung masuk menu
-showSection('menu');
+// INIT
+show('menu');
 </script>
 </body>
 </html>
