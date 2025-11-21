@@ -33,7 +33,7 @@
   </script>
 
   <style>
-    /* --- STYLE KEREN (AURORA & GLASS) --- */
+    /* --- STYLE PREMIUM (AURORA & GLASS) --- */
     body { background-color: #050505; color: #ffffff; overflow-x: hidden; }
 
     .bg-aurora {
@@ -54,6 +54,7 @@
     }
     .input-cyber:focus { border-color: #a855f7; box-shadow: 0 0 15px rgba(168, 85, 247, 0.3); outline: none; }
     
+    /* Tombol Keren */
     .btn-cyber {
       background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02));
       border: 1px solid rgba(255,255,255,0.1); transition: all 0.3s; position: relative; overflow: hidden;
@@ -64,6 +65,7 @@
     .btn-primary { background: linear-gradient(90deg, #7c3aed, #db2777); border: none; }
     .btn-primary:hover { box-shadow: 0 0 30px rgba(219, 39, 119, 0.5); }
 
+    /* Animations & Loader */
     .fade-in { animation: fadeIn 0.5s ease-out forwards; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     
@@ -78,6 +80,9 @@
     @keyframes spin { to { transform: rotate(360deg); } }
     
     .hidden { display: none !important; }
+    
+    /* Fix icon date dark mode */
+    input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; }
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: #0f0f0f; }
     ::-webkit-scrollbar-thumb { background: #444; border-radius: 3px; }
@@ -102,13 +107,13 @@
   <div id="authContainer" class="fixed inset-0 z-50 flex items-center justify-center hidden px-4">
     <div class="glass-panel w-full max-w-md p-8 rounded-3xl relative overflow-hidden fade-in">
       <div class="text-center mb-8">
-        <h2 class="font-cyber text-4xl font-bold text-white mb-2">ACCESS</h2>
-        <p class="text-gray-400 text-sm">Silakan Masukkan Email Google</p>
+        <h2 class="font-cyber text-4xl font-bold text-white mb-2">AKSES CLOUD</h2>
+        <p class="text-gray-400 text-sm">Masukkan Email untuk sinkronisasi</p>
       </div>
       <div class="space-y-5">
         <div>
-          <label class="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-wider">Email</label>
-          <input type="email" id="loginEmail" class="input-cyber w-full p-4 rounded-xl" placeholder="email@gmail.com">
+          <label class="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-wider">Email Google</label>
+          <input type="email" id="loginEmail" class="input-cyber w-full p-4 rounded-xl text-center font-mono" placeholder="email@gmail.com">
         </div>
         <button onclick="login()" class="w-full py-4 rounded-xl font-bold text-lg btn-primary text-white mt-4 shadow-lg">MASUK SYSTEM</button>
       </div>
@@ -130,7 +135,7 @@
           <div class="flex items-center gap-4">
             <div class="text-right hidden md:block">
               <div class="text-xs text-gray-400 uppercase">Account</div>
-              <div id="userDisplay" class="font-bold text-cyan-400 font-mono text-xs">...</div>
+              <div id="userDisplay" class="font-bold text-cyan-400 font-mono">...</div>
             </div>
             <button onclick="logout()" class="w-10 h-10 rounded-full bg-red-500/20 text-red-400 hover:bg-red-500 hover:text-white transition flex items-center justify-center">
               <i class="fas fa-power-off"></i>
@@ -242,7 +247,9 @@
              <div id="formTransaksi" class="space-y-4 opacity-50 pointer-events-none transition">
                 <input type="number" id="jumlahTransaksi" placeholder="Nominal (Rp)" class="input-cyber w-full p-4 rounded-xl text-xl">
                 <input type="text" id="ketTransaksi" placeholder="Keterangan (Contoh: Makan Siang)" class="input-cyber w-full p-4 rounded-xl">
-                <button onclick="simpanTransaksi()" id="btnSimpan" class="w-full btn-cyber bg-white/10 py-4 rounded-xl font-bold">KIRIM KE CLOUD</button>
+                <button onclick="simpanTransaksi()" id="btnSimpan" class="w-full btn-cyber bg-white/10 py-4 rounded-xl font-bold flex justify-center items-center gap-2">
+                    <span>KIRIM KE CLOUD</span>
+                </button>
              </div>
           </div>
           
@@ -353,7 +360,7 @@
 
   <script>
     // =======================================================
-    // 1. TEMPEL URL SCRIPT BARU (YANG SUDAH DIPERBAIKI LOGIKANYA) DI SINI:
+    // 1. URL SCRIPT (FIXED LOGIC)
     const API_URL = "https://script.google.com/macros/s/AKfycbwf4gXgoFjMX0VbPEeFL_uwEK9l_JKUAUODsmfrI4CWZeKBWk6j9ZKyD6oKn2uagEuS/exec";
     // =======================================================
     
@@ -365,6 +372,13 @@
 
     // --- STARTUP ---
     window.onload = () => {
+      // 1. Set Date Inputs to Today
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('date1').value = today;
+      document.getElementById('date2').value = today;
+      document.getElementById('baseDate').value = today;
+
+      // 2. Loading Screen
       setTimeout(() => {
         document.getElementById('splash').style.opacity = '0';
         setTimeout(() => { document.getElementById('splash').classList.add('hidden'); checkSession(); }, 700); 
@@ -516,14 +530,13 @@
           const color = t.type === 'pemasukan' ? 'text-green-400' : 'text-red-400';
           const sign = t.type === 'pemasukan' ? '+' : '-';
           
-          // --- FORMAT DATE + TIME ---
+          // --- DATE & TIME FORMAT ---
           const d = new Date(t.date);
           const dateStr = d.toLocaleDateString('id-ID', { 
               day: 'numeric', month: 'short', year: 'numeric',
               hour: '2-digit', minute: '2-digit'
-          }).replace('.', ':'); // Mengganti titik dengan titik dua utk jam
-          // --------------------------
-
+          }).replace('.', ':'); // Fix separator jam
+          
           html += `<div class="flex justify-between items-center p-3 glass-panel rounded-xl fade-in hover:bg-white/5 transition group">
               <div><div class="font-bold text-sm text-white">${t.desc}</div><div class="text-xs text-gray-500">${dateStr}</div></div>
               <div class="flex items-center gap-3"><div class="font-mono font-bold ${color}">${sign} ${val.toLocaleString()}</div>
@@ -542,6 +555,7 @@
       form.classList.remove('opacity-50', 'pointer-events-none');
       
       btnM.classList.remove('bg-green-500', 'text-black'); btnK.classList.remove('bg-red-500', 'text-white');
+      
       if(t === 'pemasukan') { btnM.classList.add('bg-green-500', 'text-black'); } 
       else { btnK.classList.add('bg-red-500', 'text-white'); }
     }
