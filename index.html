@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KALTAIN • Cloud System</title>
+  <title>KALTAIN • Kalkulator Target Pintar</title>
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -22,10 +22,7 @@
           },
           colors: {
             glass: "rgba(255, 255, 255, 0.05)",
-            glassBorder: "rgba(255, 255, 255, 0.1)",
             primary: "#a855f7", 
-            secondary: "#ec4899",
-            accent: "#22d3ee",
           }
         }
       }
@@ -54,7 +51,6 @@
     }
     .input-cyber:focus { border-color: #a855f7; box-shadow: 0 0 15px rgba(168, 85, 247, 0.3); outline: none; }
     
-    /* Tombol Keren */
     .btn-cyber {
       background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02));
       border: 1px solid rgba(255,255,255,0.1); transition: all 0.3s; position: relative; overflow: hidden;
@@ -65,7 +61,6 @@
     .btn-primary { background: linear-gradient(90deg, #7c3aed, #db2777); border: none; }
     .btn-primary:hover { box-shadow: 0 0 30px rgba(219, 39, 119, 0.5); }
 
-    /* Animations & Loader */
     .fade-in { animation: fadeIn 0.5s ease-out forwards; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     
@@ -174,8 +169,8 @@
           <button onclick="show('datecalc')" class="group glass-panel p-8 rounded-3xl text-center hover:bg-orange-900/20 transition duration-300 relative overflow-hidden">
             <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition"><i class="fas fa-calendar-alt text-9xl"></i></div>
             <div class="w-16 h-16 mx-auto bg-orange-500/20 rounded-2xl flex items-center justify-center text-orange-400 text-3xl mb-4 group-hover:scale-110 transition"><i class="fas fa-calendar-alt"></i></div>
-            <h3 class="text-xl font-bold mb-1">Tanggal</h3>
-            <p class="text-xs text-gray-400">Hitung Selisih Hari</p>
+            <h3 class="text-xl font-bold mb-1">Kalkulator Waktu</h3>
+            <p class="text-xs text-gray-400">Selisih & Prediksi</p>
           </button>
           <button onclick="show('sultan')" class="col-span-1 md:col-span-2 lg:col-span-4 glass-panel p-10 rounded-3xl flex flex-col md:flex-row items-center justify-between bg-gradient-to-r from-yellow-900/20 to-orange-900/20 border-yellow-500/30 hover:border-yellow-500/60 transition group">
             <div class="flex items-center gap-6 mb-6 md:mb-0">
@@ -360,7 +355,7 @@
 
   <script>
     // =======================================================
-    // 1. URL SCRIPT (FIXED LOGIC)
+    // 1. TEMPEL URL SCRIPT BARU ANDA DI SINI:
     const API_URL = "https://script.google.com/macros/s/AKfycbwf4gXgoFjMX0VbPEeFL_uwEK9l_JKUAUODsmfrI4CWZeKBWk6j9ZKyD6oKn2uagEuS/exec";
     // =======================================================
     
@@ -372,13 +367,13 @@
 
     // --- STARTUP ---
     window.onload = () => {
-      // 1. Set Date Inputs to Today
+      // 1. Set Default Date
       const today = new Date().toISOString().split('T')[0];
       document.getElementById('date1').value = today;
       document.getElementById('date2').value = today;
       document.getElementById('baseDate').value = today;
 
-      // 2. Loading Screen
+      // 2. Splash Screen
       setTimeout(() => {
         document.getElementById('splash').style.opacity = '0';
         setTimeout(() => { document.getElementById('splash').classList.add('hidden'); checkSession(); }, 700); 
@@ -423,7 +418,7 @@
       return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(num);
     }
 
-    // --- DOMPET LOGIC (CLOUD + ANTI CACHE) ---
+    // --- DOMPET LOGIC ---
     async function fetchDataCloud() {
       const statusEl = document.getElementById('statusSync');
       const loader = document.getElementById('loadingList');
@@ -530,12 +525,12 @@
           const color = t.type === 'pemasukan' ? 'text-green-400' : 'text-red-400';
           const sign = t.type === 'pemasukan' ? '+' : '-';
           
-          // --- DATE & TIME FORMAT ---
+          // --- DATE FORMAT (WITH TIME) ---
           const d = new Date(t.date);
           const dateStr = d.toLocaleDateString('id-ID', { 
               day: 'numeric', month: 'short', year: 'numeric',
               hour: '2-digit', minute: '2-digit'
-          }).replace('.', ':'); // Fix separator jam
+          }).replace('.', ':');
           
           html += `<div class="flex justify-between items-center p-3 glass-panel rounded-xl fade-in hover:bg-white/5 transition group">
               <div><div class="font-bold text-sm text-white">${t.desc}</div><div class="text-xs text-gray-500">${dateStr}</div></div>
@@ -555,7 +550,6 @@
       form.classList.remove('opacity-50', 'pointer-events-none');
       
       btnM.classList.remove('bg-green-500', 'text-black'); btnK.classList.remove('bg-red-500', 'text-white');
-      
       if(t === 'pemasukan') { btnM.classList.add('bg-green-500', 'text-black'); } 
       else { btnK.classList.add('bg-red-500', 'text-white'); }
     }
@@ -605,7 +599,7 @@
       document.getElementById('hasilTanggal').textContent = base.toLocaleDateString('id-ID');
     }
 
-    // --- NEW: DATE CALC LOGIC (Output Lengkap) ---
+    // --- NEW: DATE CALC LOGIC (OUTPUT LENGKAP) ---
     function hitungSelisihLengkap() {
       const d1Str = document.getElementById('date1').value;
       const d2Str = document.getElementById('date2').value;
@@ -614,32 +608,26 @@
       let d1 = new Date(d1Str);
       let d2 = new Date(d2Str);
       
-      // Pastikan d1 lebih kecil dari d2
       if (d1 > d2) { const temp = d1; d1 = d2; d2 = temp; }
       
       let years = d2.getFullYear() - d1.getFullYear();
       let months = d2.getMonth() - d1.getMonth();
       let days = d2.getDate() - d1.getDate();
       
-      // Koreksi jika hari negatif
       if (days < 0) {
           months--;
-          // Ambil jumlah hari di bulan sebelumnya
           let prevMonth = new Date(d2.getFullYear(), d2.getMonth(), 0);
           days += prevMonth.getDate();
       }
-      
-      // Koreksi jika bulan negatif
-      if (months < 0) {
-          years--;
-          months += 12;
-      }
+      if (months < 0) { years--; months += 12; }
       
       document.getElementById('hasilSelisih').innerHTML = `
         <span class="text-cyan-400">${years}</span> Tahun, 
         <span class="text-purple-400">${months}</span> Bulan, 
-        <span class="text-green-400">${days}</span> Hari
-        <br><span class="text-[10px] text-gray-500 font-normal">(Jam/Menit/Detik: 0)</span>
+        <span class="text-green-400">${days}</span> Hari, <br>
+        <span class="text-yellow-400">0</span> Jam, 
+        <span class="text-pink-400">0</span> Menit, 
+        <span class="text-blue-400">0</span> Detik
       `;
     }
   </script>
