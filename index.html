@@ -7,7 +7,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Space+Grotesk:wght@700&family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/tsparticles-confetti@2.12.0/tsparticles.confetti.min.js"></script>
   <style>
     :root {
       --purple: #a855f7;
@@ -16,16 +15,26 @@
       --amber: #f59e0b;
     }
     body { margin:0; overflow-x:hidden; background:#000; font-family:'Inter',sans-serif; color:white; }
-    #particles{position:fixed;inset:0;z-index:1;pointer-events:none;}
     
     /* Splash Screen */
     .splash{position:fixed;inset:0;background:radial-gradient(circle at center,#0f051d 0%,#000 80%);z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;transition:opacity 1.5s ease-out;}
     .title-main{font-family:'Orbitron',sans-serif;font-size:clamp(4rem,15vw,10rem);font-weight:900;background:linear-gradient(90deg,#a855f7,#ec4899,#22d3ee,#f59e0b);-webkit-background-clip:text;background-clip:text;color:transparent;letter-spacing:8px;text-shadow:0 0 80px rgba(168,85,247,.9);animation:glow 2.5s ease-in-out infinite alternate;}
     @keyframes glow{from{text-shadow:0 0 40px rgba(168,85,247,.7)}to{text-shadow:0 0 100px rgba(236,72,153,1)}}
     
-    .loading-bar{width:50vw;max-width:600px;height:10px;background:rgba(255,255,255,.1);border-radius:50px;overflow:hidden;border:2px solid rgba(168,85,247,.6);margin-top:4rem;}
-    .progress{height:100%;width:0%;background:linear-gradient(90deg,var(--purple),var(--pink));border-radius:50px;animation:load 4s ease-in-out forwards;box-shadow:0 0 40px var(--purple);}
-    @keyframes load{to{width:100%}}
+    /* Spinner */
+    .spinner {
+      border: 8px solid rgba(255,255,255,0.1);
+      border-top: 8px solid var(--purple);
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      animation: spin 1s linear infinite;
+      margin-top: 4rem;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
 
     /* Glassmorphism Card */
     .glass{
@@ -54,13 +63,11 @@
 </head>
 <body class="text-white">
 
-<div id="particles"></div>
-
 <!-- SPLASH SCREEN -->
 <div id="splash" class="splash">
   <h1 class="title-main">KALTAIN</h1>
   <p class="text-3xl md:text-5xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">Kalkulator Target Pintar</p>
-  <div class="loading-bar"><div class="progress"></div></div>
+  <div class="spinner"></div>
   <p class="mt-10 text-xl opacity-80 font-medium">By <span class="text-yellow-400 font-bold">Itsbad</span> • Loading magic...</p>
 </div>
 
@@ -220,27 +227,18 @@
 </div>
 
 <script>
-// PARTICLES & SPLASH
-tsParticles.load("particles", {
-  preset: "fireworks",
-  particles: { color: { value: ["#a855f7","#ec4899","#22d3ee","#f59e0b"] }, opacity: { value: 0.8 } }
-});
-
+// SPLASH (Tanpa particles dan confetti untuk hindari stuck, delay sederhana)
 setTimeout(() => {
-  document.querySelector('.progress').style.animation = 'load 4s ease-in-out forwards';
+  document.getElementById('splash').style.opacity = '0';
   setTimeout(() => {
-    document.getElementById('splash').style.opacity = '0';
-    setTimeout(() => {
-      document.getElementById('splash').classList.add('hidden');
-      if (!localStorage.getItem('kaltain_user')) {
-        document.getElementById('auth').classList.remove('hidden');
-      } else {
-        autoLogin();
-      }
-      confetti({particleCount: 400, spread: 120, origin: { y: 0.6 }});
-    }, 1500);
-  }, 4000);
-}, 800);
+    document.getElementById('splash').classList.add('hidden');
+    if (!localStorage.getItem('kaltain_user')) {
+      document.getElementById('auth').classList.remove('hidden');
+    } else {
+      autoLogin();
+    }
+  }, 1500);
+}, 4000);  // Delay 4 detik untuk spinner
 
 // AUTH SYSTEM
 let currentUser = localStorage.getItem('kaltain_user');
@@ -288,7 +286,6 @@ function enterApp() {
   document.getElementById('userDisplay').textContent = currentUser;
   document.getElementById('auth').classList.add('hidden');
   document.getElementById('app').classList.remove('hidden');
-  confetti({particleCount: 200, spread: 90});
   updateRingkasan();
 }
 
