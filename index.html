@@ -3,14 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KALTAIN • Kalkulator Target Pintar</title>
+  <title>KALTAIN • Cloud System</title>
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Orbitron:wght@500;700;900&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
-  
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-  
   <script src="https://cdn.tailwindcss.com"></script>
   
   <script>
@@ -35,102 +33,54 @@
   </script>
 
   <style>
-    /* --- Base Setup (ORIGINAL CODE) --- */
-    body {
-      background-color: #050505;
-      color: #ffffff;
-      overflow-x: hidden;
-    }
+    /* --- STYLE KEREN (AURORA & GLASS) --- */
+    body { background-color: #050505; color: #ffffff; overflow-x: hidden; }
 
-    /* --- Animated Background --- */
     .bg-aurora {
-      position: fixed;
-      top: 0; left: 0; width: 100vw; height: 100vh;
-      background: 
-        radial-gradient(circle at 15% 50%, rgba(76, 29, 149, 0.4), transparent 25%), 
-        radial-gradient(circle at 85% 30%, rgba(236, 72, 153, 0.2), transparent 25%);
-      z-index: -2;
-      filter: blur(60px);
-      animation: pulseBg 10s infinite alternate;
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      background: radial-gradient(circle at 15% 50%, rgba(76, 29, 149, 0.4), transparent 25%), 
+                  radial-gradient(circle at 85% 30%, rgba(236, 72, 153, 0.2), transparent 25%);
+      z-index: -2; filter: blur(60px); animation: pulseBg 10s infinite alternate;
     }
-    @keyframes pulseBg {
-      0% { opacity: 0.8; transform: scale(1); }
-      100% { opacity: 1; transform: scale(1.1); }
-    }
+    @keyframes pulseBg { 0% { opacity: 0.8; transform: scale(1); } 100% { opacity: 1; transform: scale(1.1); } }
 
-    /* --- Glassmorphism Card --- */
     .glass-panel {
-      background: rgba(20, 20, 25, 0.6);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+      background: rgba(20, 20, 25, 0.6); backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08); box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
     }
 
-    /* --- Inputs --- */
     .input-cyber {
-      background: rgba(0, 0, 0, 0.3);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      color: white;
-      transition: all 0.3s ease;
+      background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 255, 255, 0.1); color: white; transition: all 0.3s ease;
     }
-    .input-cyber:focus {
-      border-color: #a855f7;
-      box-shadow: 0 0 15px rgba(168, 85, 247, 0.3);
-      outline: none;
-    }
-
-    /* --- Buttons --- */
+    .input-cyber:focus { border-color: #a855f7; box-shadow: 0 0 15px rgba(168, 85, 247, 0.3); outline: none; }
+    
     .btn-cyber {
       background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02));
-      border: 1px solid rgba(255,255,255,0.1);
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      position: relative;
-      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.1); transition: all 0.3s; position: relative; overflow: hidden;
     }
-    .btn-cyber:hover {
-      transform: translateY(-2px);
-      border-color: #a855f7;
-      box-shadow: 0 0 20px rgba(168, 85, 247, 0.4);
-    }
+    .btn-cyber:hover { transform: translateY(-2px); border-color: #a855f7; box-shadow: 0 0 20px rgba(168, 85, 247, 0.4); }
     .btn-cyber:active { transform: scale(0.98); }
 
-    .btn-primary {
-      background: linear-gradient(90deg, #7c3aed, #db2777);
-      border: none;
-    }
-    .btn-primary:hover {
-      box-shadow: 0 0 30px rgba(219, 39, 119, 0.5);
-    }
+    .btn-primary { background: linear-gradient(90deg, #7c3aed, #db2777); border: none; }
+    .btn-primary:hover { box-shadow: 0 0 30px rgba(219, 39, 119, 0.5); }
 
-    /* --- Animations --- */
     .fade-in { animation: fadeIn 0.5s ease-out forwards; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-    /* --- NEW: LOADING SPINNER --- */
+    
     .loader {
-      width: 60px;
-      height: 60px;
-      border: 5px solid rgba(255, 255, 255, 0.1);
-      border-top-color: #a855f7;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-      margin: 20px auto;
+      width: 60px; height: 60px; border: 5px solid rgba(255, 255, 255, 0.1);
+      border-top-color: #a855f7; border-radius: 50%; animation: spin 1s linear infinite; margin: 20px auto;
       box-shadow: 0 0 20px rgba(168, 85, 247, 0.5);
     }
     .mini-loader {
       width: 20px; height: 20px; border: 2px solid rgba(255,255,255,0.2); border-top-color: white; border-radius: 50%; animation: spin 1s linear infinite; display: inline-block;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
-
-    /* --- Scrollbar --- */
+    
+    .hidden { display: none !important; }
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: #0f0f0f; }
     ::-webkit-scrollbar-thumb { background: #444; border-radius: 3px; }
-    ::-webkit-scrollbar-thumb:hover { background: #a855f7; }
-
-    /* --- Utilities --- */
-    .hidden { display: none !important; }
   </style>
 </head>
 <body class="antialiased selection:bg-purple-500 selection:text-white">
@@ -143,12 +93,9 @@
           KALTAIN
         </h1>
         <div class="loader"></div>
-        <p class="text-white font-cyber text-lg md:text-xl tracking-widest uppercase">
-          Kalkulator Target Pintar
-        </p>
-        <p class="text-gray-500 font-mono text-sm mt-6">
-          By 【﻿ 𝕀𝕥𝕤𝕓𝕒𝕕 】 Developer
-        </p>
+        <p class="text-white font-cyber text-lg md:text-xl tracking-widest uppercase">Kalkulator Target Pintar</p>
+        <p class="text-xs font-mono text-green-400 animate-pulse"><i class="fas fa-wifi mr-1"></i> Connecting to Cloud...</p>
+        <p class="text-gray-500 font-mono text-sm mt-6">By 【﻿ 𝕀𝕥𝕤𝕓𝕒𝕕 】 Developer</p>
     </div>
   </div>
 
@@ -156,11 +103,11 @@
     <div class="glass-panel w-full max-w-md p-8 rounded-3xl relative overflow-hidden fade-in">
       <div class="text-center mb-8">
         <h2 class="font-cyber text-4xl font-bold text-white mb-2">ACCESS</h2>
-        <p class="text-gray-400 text-sm">Cloud Database System</p>
+        <p class="text-gray-400 text-sm">Silakan Masukkan Email Google</p>
       </div>
       <div class="space-y-5">
         <div>
-          <label class="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-wider">Email Google</label>
+          <label class="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-wider">Email</label>
           <input type="email" id="loginEmail" class="input-cyber w-full p-4 rounded-xl" placeholder="email@gmail.com">
         </div>
         <button onclick="login()" class="w-full py-4 rounded-xl font-bold text-lg btn-primary text-white mt-4 shadow-lg">MASUK SYSTEM</button>
@@ -182,8 +129,8 @@
           </div>
           <div class="flex items-center gap-4">
             <div class="text-right hidden md:block">
-              <div class="text-xs text-gray-400 uppercase">User</div>
-              <div id="userDisplay" class="font-bold text-cyan-400 font-mono">...</div>
+              <div class="text-xs text-gray-400 uppercase">Account</div>
+              <div id="userDisplay" class="font-bold text-cyan-400 font-mono text-xs">...</div>
             </div>
             <button onclick="logout()" class="w-10 h-10 rounded-full bg-red-500/20 text-red-400 hover:bg-red-500 hover:text-white transition flex items-center justify-center">
               <i class="fas fa-power-off"></i>
@@ -211,7 +158,7 @@
             <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition"><i class="fas fa-wallet text-9xl"></i></div>
             <div class="w-16 h-16 mx-auto bg-green-500/20 rounded-2xl flex items-center justify-center text-green-400 text-3xl mb-4 group-hover:scale-110 transition"><i class="fas fa-wallet"></i></div>
             <h3 class="text-xl font-bold mb-1">Dompet Cloud</h3>
-            <p class="text-xs text-gray-400">Catat Keuangan Online</p>
+            <p class="text-xs text-gray-400">Catat Keuangan</p>
           </button>
           <button onclick="show('calc')" class="group glass-panel p-8 rounded-3xl text-center hover:bg-blue-900/20 transition duration-300 relative overflow-hidden">
             <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition"><i class="fas fa-calculator text-9xl"></i></div>
@@ -223,7 +170,7 @@
             <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition"><i class="fas fa-calendar-alt text-9xl"></i></div>
             <div class="w-16 h-16 mx-auto bg-orange-500/20 rounded-2xl flex items-center justify-center text-orange-400 text-3xl mb-4 group-hover:scale-110 transition"><i class="fas fa-calendar-alt"></i></div>
             <h3 class="text-xl font-bold mb-1">Tanggal</h3>
-            <p class="text-xs text-gray-400">Hitung Detail Waktu</p>
+            <p class="text-xs text-gray-400">Hitung Selisih Hari</p>
           </button>
           <button onclick="show('sultan')" class="col-span-1 md:col-span-2 lg:col-span-4 glass-panel p-10 rounded-3xl flex flex-col md:flex-row items-center justify-between bg-gradient-to-r from-yellow-900/20 to-orange-900/20 border-yellow-500/30 hover:border-yellow-500/60 transition group">
             <div class="flex items-center gap-6 mb-6 md:mb-0">
@@ -278,8 +225,8 @@
         <div class="flex items-center mb-8 gap-4">
           <button onclick="show('menu')" class="w-12 h-12 rounded-xl glass-panel flex items-center justify-center hover:bg-white/10"><i class="fas fa-arrow-left"></i></button>
           <div>
-              <h2 class="text-2xl font-bold font-cyber">Dompet Digital</h2>
-              <p class="text-[10px] text-gray-400 ml-1 pt-1" id="statusSync">Cloud Ready</p>
+              <h2 class="text-2xl font-bold font-cyber">Dompet Cloud</h2>
+              <p class="text-[10px] text-gray-400 ml-1 pt-1" id="statusSync">Ready</p>
           </div>
         </div>
 
@@ -295,7 +242,7 @@
              <div id="formTransaksi" class="space-y-4 opacity-50 pointer-events-none transition">
                 <input type="number" id="jumlahTransaksi" placeholder="Nominal (Rp)" class="input-cyber w-full p-4 rounded-xl text-xl">
                 <input type="text" id="ketTransaksi" placeholder="Keterangan (Contoh: Makan Siang)" class="input-cyber w-full p-4 rounded-xl">
-                <button onclick="simpanTransaksi()" id="btnSimpan" class="w-full btn-cyber bg-white/10 py-4 rounded-xl font-bold">SIMPAN KE CLOUD</button>
+                <button onclick="simpanTransaksi()" id="btnSimpan" class="w-full btn-cyber bg-white/10 py-4 rounded-xl font-bold">KIRIM KE CLOUD</button>
              </div>
           </div>
           
@@ -307,7 +254,9 @@
                        <button onclick="hapusDataCloud()" id="btnHapus" class="text-xs text-red-400 hover:text-red-300 border border-red-500/30 px-3 py-1 rounded-lg hover:bg-red-500/20 transition flex items-center gap-1">
                          <i class="fas fa-bomb"></i> Reset
                        </button>
-                       <button onclick="fetchDataCloud()" class="text-xs bg-purple-500/20 text-purple-400 px-3 py-1 rounded-lg hover:bg-purple-500/40"><i class="fas fa-sync"></i></button>
+                       <button onclick="fetchDataCloud()" class="text-xs bg-purple-500/20 text-purple-400 px-3 py-1 rounded-lg hover:bg-purple-500/40">
+                         <i class="fas fa-sync-alt"></i>
+                       </button>
                    </div>
                </div>
                <div class="flex gap-2 mt-2">
@@ -404,7 +353,7 @@
 
   <script>
     // =======================================================
-    // 1. TEMPEL URL SCRIPT ANDA DISINI !!!
+    // 1. TEMPEL URL SCRIPT BARU (YANG SUDAH DIPERBAIKI LOGIKANYA) DI SINI:
     const API_URL = "https://script.google.com/macros/s/AKfycbwf4gXgoFjMX0VbPEeFL_uwEK9l_JKUAUODsmfrI4CWZeKBWk6j9ZKyD6oKn2uagEuS/exec";
     // =======================================================
     
@@ -414,6 +363,7 @@
     let transactionData = [];
     let currentFilter = 'all';
 
+    // --- STARTUP ---
     window.onload = () => {
       setTimeout(() => {
         document.getElementById('splash').style.opacity = '0';
@@ -565,7 +515,15 @@
           let val = parseInt(t.amount); if(isNaN(val)) val = 0;
           const color = t.type === 'pemasukan' ? 'text-green-400' : 'text-red-400';
           const sign = t.type === 'pemasukan' ? '+' : '-';
-          const dateStr = new Date(t.date).toLocaleDateString('id-ID');
+          
+          // --- FORMAT DATE + TIME ---
+          const d = new Date(t.date);
+          const dateStr = d.toLocaleDateString('id-ID', { 
+              day: 'numeric', month: 'short', year: 'numeric',
+              hour: '2-digit', minute: '2-digit'
+          }).replace('.', ':'); // Mengganti titik dengan titik dua utk jam
+          // --------------------------
+
           html += `<div class="flex justify-between items-center p-3 glass-panel rounded-xl fade-in hover:bg-white/5 transition group">
               <div><div class="font-bold text-sm text-white">${t.desc}</div><div class="text-xs text-gray-500">${dateStr}</div></div>
               <div class="flex items-center gap-3"><div class="font-mono font-bold ${color}">${sign} ${val.toLocaleString()}</div>
@@ -584,7 +542,6 @@
       form.classList.remove('opacity-50', 'pointer-events-none');
       
       btnM.classList.remove('bg-green-500', 'text-black'); btnK.classList.remove('bg-red-500', 'text-white');
-      
       if(t === 'pemasukan') { btnM.classList.add('bg-green-500', 'text-black'); } 
       else { btnK.classList.add('bg-red-500', 'text-white'); }
     }
