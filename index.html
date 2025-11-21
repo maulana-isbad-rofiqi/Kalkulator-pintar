@@ -225,9 +225,16 @@
                          <label class="text-[10px] text-gray-500 block mb-1 uppercase">Modal (HPP)</label>
                          <input type="number" id="hBeli" placeholder="0" class="input-cyber p-3 rounded-lg w-full text-sm">
                      </div>
+                     
                      <div>
-                         <label class="text-[10px] text-gray-500 block mb-1 uppercase text-yellow-400">Fee/Pajak (%)</label>
-                         <input type="number" id="feePersen" placeholder="0" class="input-cyber p-3 rounded-lg w-full text-sm border-yellow-500/30 border">
+                         <label class="text-[10px] text-gray-500 block mb-1 uppercase text-yellow-400">Fee Platform</label>
+                         <div class="flex gap-1">
+                             <input type="number" id="feeInput" placeholder="0" class="input-cyber p-3 rounded-lg w-full text-sm border-yellow-500/30 border">
+                             <select id="feeType" class="input-cyber p-3 rounded-lg bg-black text-sm border-yellow-500/30 border w-16 text-center font-bold text-yellow-400">
+                                 <option value="percent">%</option>
+                                 <option value="nominal">Rp</option>
+                             </select>
+                         </div>
                      </div>
                  </div>
                  <div>
@@ -385,7 +392,7 @@
 
   <script>
     // =======================================================
-    // 1. URL SCRIPT ANDA (PASTIKAN YANG TERBARU)
+    // 1. URL SCRIPT (FIXED LOGIC)
     const API_URL = "https://script.google.com/macros/s/AKfycbwf4gXgoFjMX0VbPEeFL_uwEK9l_JKUAUODsmfrI4CWZeKBWk6j9ZKyD6oKn2uagEuS/exec";
     // =======================================================
     
@@ -489,6 +496,7 @@
         renderDompet(); 
         const btn = document.getElementById('btnHapus');
         btn.innerHTML = "Wait..."; btn.disabled = true;
+        
         fetch(API_URL, {
           method: 'POST',
           mode: 'no-cors',
@@ -584,7 +592,7 @@
       }).catch(err => { alert("Gagal."); btn.innerHTML = originalText; btn.disabled = false; });
     }
 
-    // --- NEW: TARGET PINTAR (WITH FEE LOGIC) ---
+    // --- TARGET PINTAR (FLEXIBLE FEE) ---
     function hitungTarget() {
       const unit = document.getElementById('unit').value;
       const jmlPeriode = parseFloat(document.getElementById('jmlPeriode').value) || 1;
@@ -593,93 +601,60 @@
       const hBeli = parseFloat(document.getElementById('hBeli').value) || 0;
       const bVar = parseFloat(document.getElementById('bVariabel').value) || 0;
       const bOps = parseFloat(document.getElementById('bOperasional').value) || 0;
-      const feePersen = parseFloat(document.getElementById('feePersen').value) || 0;
-
-      // 1. Hitung Fee Nominal
-      const feeNominal = hJual * (feePersen / 100);
-
-      // 2. Margin Bersih setelah dipotong Fee
-      const marginPerUnit = hJual - (hBeli + bVar + feeNominal);
       
-      if(marginPerUnit <= 0) return alert("Margin minus! Fee atau Biaya terlalu besar.");
+      // FEE LOGIC
+      const feeInput = parseFloat(document.getElementById('feeInput').value) || 0;
+      const feeType = document.getElementById('feeType').value;
+      let feeNominal = 0;
+      if (feeType === 'percent') {
+          feeNominal = hJual * (feeInput / 100);
+      } else {
+          feeNominal = feeInput;
+      }
+
+      const marginPerUnit = hJual - (hBeli + bVar + feeNominal);
+      if(marginPerUnit <= 0) return alert("Margin minus! Cek Harga/Fee.");
 
       const totalHari = unit === 'Bulan' ? (jmlPeriode * 30) : (jmlPeriode * 365);
       const totalBulan = unit === 'Bulan' ? jmlPeriode : (jmlPeriode * 12);
       const totalFixedCost = bOps * totalBulan;
-      const totalRevenueNeeded = tLaba + totalFixedCost;
-      const targetUnitsTotal = Math.ceil(totalRevenueNeeded / marginPerUnit);
+      const revenueNeeded = tLaba + totalFixedCost;
+      const targetUnits = Math.ceil(revenueNeeded / marginPerUnit);
       const bepUnits = Math.ceil(totalFixedCost / marginPerUnit);
       const bepRupiah = bepUnits * hJual;
-      
-      const omsetTarget = targetUnitsTotal * hJual;
-      const totalModal = (targetUnitsTotal * (hBeli + bVar)) + totalFixedCost;
-      const marginPersen = ((marginPerUnit / hJual) * 100).toFixed(1);
-      const totalFeeBayar = targetUnitsTotal * feeNominal; // Estimasi total fee yang dibayar ke platform
+      const omsetTarget = targetUnits * hJual;
+      const totalModal = (targetUnits * (hBeli + bVar)) + totalFixedCost;
+      const marginPercent = ((marginPerUnit / hJual) * 100).toFixed(1);
+      const totalFeeBayar = targetUnits * feeNominal;
 
       let status = "NORMAL";
       let statusColor = "text-yellow-400";
-      if(marginPersen > 30) { status = "SANGAT SEHAT"; statusColor = "text-green-400"; }
-      else if(marginPersen < 15) { status = "WASPADA"; statusColor = "text-red-400"; }
+      if(marginPercent > 30) { status = "SANGAT SEHAT"; statusColor = "text-green-400"; }
+      else if(marginPercent < 15) { status = "WASPADA"; statusColor = "text-red-400"; }
 
       const targets = {
-          daily: Math.ceil(targetUnitsTotal / totalHari),
-          weekly: Math.ceil(targetUnitsTotal / (totalHari/7)),
-          monthly: Math.ceil(targetUnitsTotal / totalBulan)
+          daily: Math.ceil(targetUnits / totalHari),
+          weekly: Math.ceil(targetUnits / (totalHari/7)),
+          monthly: Math.ceil(targetUnits / totalBulan)
       };
 
       document.getElementById('hasilTarget').innerHTML = `
-        <div class="text-left w-full space-y-4 animate-fade-in">
+        <div class="text-left w-full animate-fade-in space-y-4">
             <div class="grid grid-cols-2 gap-3">
-                <div class="bg-white/5 p-3 rounded-xl border border-white/10">
-                    <p class="text-[10px] text-gray-400 uppercase">Target Unit</p>
-                    <p class="text-xl font-bold text-white font-mono">${targetUnitsTotal.toLocaleString()}</p>
-                </div>
-                <div class="bg-white/5 p-3 rounded-xl border border-white/10">
-                    <p class="text-[10px] text-gray-400 uppercase">Margin Net</p>
-                    <p class="text-xl font-bold ${statusColor} font-mono">${marginPersen}%</p>
-                </div>
+                <div class="bg-white/5 p-3 rounded-xl border border-white/10"><p class="text-[10px] text-gray-400 uppercase">Target Unit</p><p class="text-xl font-bold text-white font-mono">${targetUnits.toLocaleString()}</p></div>
+                <div class="bg-white/5 p-3 rounded-xl border border-white/10"><p class="text-[10px] text-gray-400 uppercase">Margin Net</p><p class="text-xl font-bold ${statusColor} font-mono">${marginPercent}%</p></div>
             </div>
-
             <div class="space-y-2 text-xs">
-                <div class="flex justify-between border-b border-white/10 pb-1">
-                    <span class="text-gray-400">Omset Kotor</span>
-                    <span class="font-bold text-cyan-400">${formatRupiah(omsetTarget)}</span>
-                </div>
-                <div class="flex justify-between border-b border-white/10 pb-1">
-                    <span class="text-gray-400">Est. Modal Total</span>
-                    <span class="font-bold text-pink-400">${formatRupiah(totalModal)}</span>
-                </div>
-                <div class="flex justify-between border-b border-white/10 pb-1">
-                    <span class="text-gray-400 text-yellow-400">Est. Fee Platform</span>
-                    <span class="font-bold text-yellow-400">${formatRupiah(totalFeeBayar)}</span>
-                </div>
-                <div class="flex justify-between border-b border-white/10 pb-1">
-                    <span class="text-gray-400">Status</span>
-                    <span class="font-bold ${statusColor}">${status}</span>
-                </div>
+                <div class="flex justify-between border-b border-white/10 pb-1"><span class="text-gray-400">Omset Kotor</span><span class="font-bold text-cyan-400">${formatRupiah(omsetTarget)}</span></div>
+                <div class="flex justify-between border-b border-white/10 pb-1"><span class="text-gray-400">Est. Modal Total</span><span class="font-bold text-pink-400">${formatRupiah(totalModal)}</span></div>
+                <div class="flex justify-between border-b border-white/10 pb-1"><span class="text-gray-400 text-yellow-400">Est. Fee Platform</span><span class="font-bold text-yellow-400">${formatRupiah(totalFeeBayar)}</span></div>
+                <div class="flex justify-between border-b border-white/10 pb-1"><span class="text-gray-400">Status</span><span class="font-bold ${statusColor}">${status}</span></div>
             </div>
-
-            <div class="bg-black/40 p-3 rounded-lg border border-white/5">
-                <p class="text-[10px] text-gray-500 uppercase mb-1">Titik Impas (BEP)</p>
-                <div class="flex justify-between items-end">
-                    <span class="text-yellow-400 font-bold font-mono">${bepUnits.toLocaleString()} Unit</span>
-                    <span class="text-xs text-gray-400">(${formatRupiah(bepRupiah)})</span>
-                </div>
-            </div>
-
+            <div class="bg-black/40 p-3 rounded-lg border border-white/5"><p class="text-[10px] text-gray-500 uppercase mb-1">Titik Impas (BEP)</p><div class="flex justify-between items-end"><span class="text-yellow-400 font-bold font-mono">${bepUnits.toLocaleString()} Unit</span><span class="text-xs text-gray-400">(${formatRupiah(bepRupiah)})</span></div></div>
             <div class="grid grid-cols-3 gap-2 text-center text-xs mt-2">
-                <div class="bg-primary/10 p-2 rounded-lg border border-primary/20">
-                    <span class="block font-bold text-white text-lg">${targets.daily}</span>
-                    <span class="text-gray-400 text-[10px]">/Hari</span>
-                </div>
-                <div class="bg-primary/10 p-2 rounded-lg border border-primary/20">
-                    <span class="block font-bold text-white text-lg">${targets.weekly}</span>
-                    <span class="text-gray-400 text-[10px]">/Minggu</span>
-                </div>
-                <div class="bg-primary/10 p-2 rounded-lg border border-primary/20">
-                    <span class="block font-bold text-white text-lg">${targets.monthly}</span>
-                    <span class="text-gray-400 text-[10px]">/Bulan</span>
-                </div>
+                <div class="bg-primary/10 p-2 rounded-lg border border-primary/20"><span class="block font-bold text-white text-lg">${targets.daily}</span><span class="text-gray-400 text-[10px]">/Hari</span></div>
+                <div class="bg-primary/10 p-2 rounded-lg border border-primary/20"><span class="block font-bold text-white text-lg">${targets.weekly}</span><span class="text-gray-400 text-[10px]">/Minggu</span></div>
+                <div class="bg-primary/10 p-2 rounded-lg border border-primary/20"><span class="block font-bold text-white text-lg">${targets.monthly}</span><span class="text-gray-400 text-[10px]">/Bulan</span></div>
             </div>
         </div>
       `;
